@@ -14,14 +14,9 @@ public class Lexer {
 
     private char ch;
 
-    private Lexer(CharSequence input) {
+    public Lexer(CharSequence input) {
         this.input = input;
-    }
-
-    public static Lexer create(CharSequence input) {
-        Lexer lexer = new Lexer(input);
-        lexer.readChar();
-        return lexer;
+        readChar();
     }
 
     public Token nextToken() {

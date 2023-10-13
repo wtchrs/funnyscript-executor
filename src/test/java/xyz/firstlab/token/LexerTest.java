@@ -171,7 +171,7 @@ class LexerTest {
                 new Token(TokenType.EOF, "", 25, 1) // EOF
         );
 
-        Lexer lexer = Lexer.create(input);
+        Lexer lexer = new Lexer(input);
         for (int i = 0; i < expectedList.size(); i++) {
             Token expected = expectedList.get(i);
             Token token = lexer.nextToken();

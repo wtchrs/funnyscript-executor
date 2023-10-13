@@ -1,11 +1,9 @@
 package xyz.firstlab.token;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import xyz.firstlab.StringEscapeUtils;
 
-@Getter
-@EqualsAndHashCode
+import java.util.Objects;
+
 public class Token {
 
     private final TokenType type;
@@ -30,12 +28,42 @@ public class Token {
         this.columnNumber = columnNumber;
     }
 
+    public TokenType getType() {
+        return type;
+    }
+
+    public String getLiteral() {
+        return literal;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public int getColumnNumber() {
+        return columnNumber;
+    }
+
     @Override
     public String toString() {
         return String.format(
                 "Token(type=%s, literal=\"%s\", lineNumber=%d, columnNumber=%d)",
                 type.toString(), StringEscapeUtils.escapeString(literal), lineNumber, columnNumber
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return getLineNumber() == token.getLineNumber() && getColumnNumber() == token.getColumnNumber() &&
+                getType() == token.getType() && Objects.equals(getLiteral(), token.getLiteral());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getType(), getLiteral(), getLineNumber(), getColumnNumber());
     }
 
 }

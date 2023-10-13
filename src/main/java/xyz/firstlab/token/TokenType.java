@@ -1,10 +1,7 @@
 package xyz.firstlab.token;
 
-import lombok.Getter;
-
 import java.util.Map;
 
-@Getter
 public enum TokenType {
 
     ILLEGAL("ILLEGAL"),
@@ -38,14 +35,18 @@ public enum TokenType {
 
     private final String value;
 
-    TokenType(String value) {
-        this.value = value;
-    }
-
     private static final Map<String, TokenType> keywords = Map.of(
             "case", TokenType.CASE,
             "default", TokenType.DEFAULT
     );
+
+    TokenType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
 
     public static TokenType lookupIdent(CharSequence ident) {
         TokenType type = keywords.get(ident.toString());

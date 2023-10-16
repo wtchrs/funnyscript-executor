@@ -27,9 +27,10 @@ public class Program implements Node {
     @Override
     public String string() {
         StringBuilder sb = new StringBuilder();
-        for (Expression expr : expressions) {
-            sb.append(expr.string()).append('\n');
+        for (Expression exp : expressions) {
+            sb.append(exp.string()).append('\n');
         }
         return sb.toString();
     }
+
 }

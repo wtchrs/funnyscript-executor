@@ -1,6 +1,7 @@
 package xyz.firstlab.parser;
 
 import xyz.firstlab.parser.ast.Expression;
+import xyz.firstlab.parser.ast.Identifier;
 import xyz.firstlab.parser.ast.NumberLiteral;
 import xyz.firstlab.parser.ast.Program;
 import xyz.firstlab.token.Lexer;
@@ -20,7 +21,8 @@ public class Parser {
     private Token peekToken;
 
     private final Map<TokenType, PrefixParseFn> prefixParseFnMap = Map.of(
-            TokenType.NUMBER, this::parseNumber
+            TokenType.NUMBER, this::parseNumber,
+            TokenType.IDENT, this::parseIdentifier
     );
 
     private final Map<TokenType, InfixParseFn> infixParseFnMap = Map.of();
@@ -35,10 +37,10 @@ public class Parser {
         Program program = new Program();
 
         while (!curTokenIs(TokenType.EOF)) {
-            Expression expr = parseExpression(Precedence.LOWEST);
+            Expression exp = parseExpression(Precedence.LOWEST);
 
-            if (expr != null) {
-                program.append(expr);
+            if (exp != null) {
+                program.append(exp);
             }
 
             nextToken();
@@ -78,17 +80,17 @@ public class Parser {
             noPrefixParseFnError(curToken);
             return null;
         }
-        Expression leftExpr = prefix.parse();
+        Expression leftExp = prefix.parse();
 
         while (!peekTokenIs(TokenType.NEWLINE) && precedence.getValue() < peekPrecedence().getValue()) {
             InfixParseFn infix = infixParseFnMap.get(peekToken.getType());
             if (infix == null) {
-                return leftExpr;
+                return leftExp;
             }
-            leftExpr = infix.parse(leftExpr);
+            leftExp = infix.parse(leftExp);
         }
 
-        return leftExpr;
+        return leftExp;
     }
 
     private Expression parseNumber() {
@@ -98,6 +100,10 @@ public class Parser {
             wrongNumberFormatError(curToken);
             return null;
         }
+    }
+
+    private Expression parseIdentifier() {
+        return new Identifier(curToken, curToken.getLiteral());
     }
 
     private void noPrefixParseFnError(Token token) {

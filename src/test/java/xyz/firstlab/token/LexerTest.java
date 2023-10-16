@@ -10,6 +10,42 @@ import static org.assertj.core.api.Assertions.*;
 class LexerTest {
 
     @Test
+    @DisplayName("Test Lexer::nextToken() Number type parsing")
+    void testNumberType() {
+        String input = """
+                0
+                0.1
+                1.
+                1.0
+                .1
+                """;
+
+        List<Token> expectedList = List.of(
+                new Token(TokenType.NUMBER, "0", 1, 1),
+                new Token(TokenType.NEWLINE, "\n", 1, 2),
+                new Token(TokenType.NUMBER, "0.1", 2, 1),
+                new Token(TokenType.NEWLINE, "\n", 2, 4),
+                new Token(TokenType.NUMBER, "1.", 3, 1),
+                new Token(TokenType.NEWLINE, "\n", 3, 3),
+                new Token(TokenType.NUMBER, "1.0", 4, 1),
+                new Token(TokenType.NEWLINE, "\n", 4, 4),
+                new Token(TokenType.NUMBER, ".1", 5, 1),
+                new Token(TokenType.NEWLINE, "\n", 5, 3),
+                new Token(TokenType.EOF, "", 6, 1)
+        );
+
+        Lexer lexer = new Lexer(input);
+        for (int i = 0; i < expectedList.size(); i++) {
+            Token expected = expectedList.get(i);
+            Token token = lexer.nextToken();
+
+            assertThat(token)
+                    .overridingErrorMessage("Test %d failed\nexpected: %s\n but was: %s", i, expected, token)
+                    .isEqualTo(expected);
+        }
+    }
+
+    @Test
     @DisplayName("Test Lexer::nextToken()")
     void testNextToken() {
         String input = """

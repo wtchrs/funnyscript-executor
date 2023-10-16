@@ -167,7 +167,7 @@ public class Lexer {
     }
 
     private boolean isDigit() {
-        return '0' <= ch && ch <= '9';
+        return '0' <= ch && ch <= '9' || ch == '.';
     }
 
     private void skipWhitespace() {

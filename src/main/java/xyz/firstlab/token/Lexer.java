@@ -100,10 +100,10 @@ public class Lexer {
 
         if (readPosition >= input.length()) {
             ch = 0;
-            return;
+        } else {
+            ch = input.charAt(readPosition);
         }
 
-        ch = input.charAt(readPosition);
         position = readPosition;
         readPosition++;
     }

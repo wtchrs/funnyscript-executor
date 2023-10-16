@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 class LexerTest {
 
     @Test
-    @DisplayName("Test Lexer::nextToken() Number type parsing")
+    @DisplayName("Lexer::nextToken() Number type test")
     void testNumberType() {
         String input = """
                 0
@@ -46,7 +46,6 @@ class LexerTest {
     }
 
     @Test
-    @DisplayName("Test Lexer::nextToken()")
     void testNextToken() {
         String input = """
                 10 + 5

@@ -1,9 +1,6 @@
 package xyz.firstlab.parser;
 
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.Identifier;
-import xyz.firstlab.parser.ast.NumberLiteral;
-import xyz.firstlab.parser.ast.Program;
+import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.token.Lexer;
 import xyz.firstlab.token.Token;
 import xyz.firstlab.token.TokenType;
@@ -22,7 +19,9 @@ public class Parser {
 
     private final Map<TokenType, PrefixParseFn> prefixParseFnMap = Map.of(
             TokenType.NUMBER, this::parseNumber,
-            TokenType.IDENT, this::parseIdentifier
+            TokenType.IDENT, this::parseIdentifier,
+            TokenType.PLUS, this::parsePrefixExpression,
+            TokenType.MINUS, this::parsePrefixExpression
     );
 
     private final Map<TokenType, InfixParseFn> infixParseFnMap = Map.of();
@@ -104,6 +103,13 @@ public class Parser {
 
     private Expression parseIdentifier() {
         return new Identifier(curToken, curToken.getLiteral());
+    }
+
+    private Expression parsePrefixExpression() {
+        Token token = curToken;
+        nextToken();
+        Expression right = parseExpression(Precedence.PREFIX);
+        return new PrefixExpression(token, token.getLiteral(), right);
     }
 
     private void noPrefixParseFnError(Token token) {

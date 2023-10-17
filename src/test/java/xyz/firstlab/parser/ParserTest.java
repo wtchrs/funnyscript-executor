@@ -1,6 +1,8 @@
 package xyz.firstlab.parser;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.token.Lexer;
 
@@ -53,40 +55,28 @@ class ParserTest {
         }
     }
 
-    @Test
-    void prefixOperatorParsing() {
-        class Test {
-            String input;
-            String operator;
-            Object value;
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    +15 | + | 15
+                    -15 | - | 15
+                    """
+    )
+    void prefixExpressionParsing(String input, String operator, String value) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
 
-            public Test(String input, String operator, Object value) {
-                this.input = input;
-                this.operator = operator;
-                this.value = value;
-            }
-        }
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
 
-        List<Test> tests = List.of(
-                new Test("+15", "+", new BigDecimal("15")),
-                new Test("-15", "-", new BigDecimal("15"))
-        );
-
-        for (Test test : tests) {
-            Lexer lexer = new Lexer(test.input);
-            Parser parser = new Parser(lexer);
-            Program program = parser.parseProgram();
-            checkParserErrors(parser);
-
-            List<Expression> expressions = program.getExpressions();
-            assertThat(expressions)
-                    .withFailMessage(
-                            "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
-                            expressions.size())
-                    .hasSize(1);
-
-            testPrefixOperator(expressions.get(0), test.operator, test.value);
-        }
+        testPrefixExpression(expressions.get(0), operator, new BigDecimal(value));
     }
 
     void checkParserErrors(Parser parser) {
@@ -126,7 +116,7 @@ class ParserTest {
                 .isEqualTo(expected);
     }
 
-    private void testPrefixOperator(Expression exp, String expectedOperator, Object expectedValue) {
+    private void testPrefixExpression(Expression exp, String operator, Object right) {
         assertThat(exp)
                 .withFailMessage("exp type is wrong.\n expected: PrefixExpression, got: %s", exp.getClass())
                 .isInstanceOf(PrefixExpression.class);
@@ -135,14 +125,14 @@ class ParserTest {
         assertThat(prefix.getOperator())
                 .withFailMessage(
                         "prefix.operator is wrong.\n expected: %s, got: %s",
-                        expectedOperator,
+                        operator,
                         prefix.getOperator())
-                .isEqualTo(expectedOperator);
+                .isEqualTo(operator);
 
-        if (expectedValue instanceof BigDecimal expected) {
+        if (right instanceof BigDecimal expected) {
             testNumberLiteral(prefix.getRight(), expected);
         } else {
-            fail("type of expectedValue is not handled.\n got: %s", expectedValue.getClass());
+            fail("type of right is not handled.\n got: %s", right.getClass());
         }
     }
 

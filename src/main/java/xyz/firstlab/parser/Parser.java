@@ -24,7 +24,13 @@ public class Parser {
             TokenType.MINUS, this::parsePrefixExpression
     );
 
-    private final Map<TokenType, InfixParseFn> infixParseFnMap = Map.of();
+    private final Map<TokenType, InfixParseFn> infixParseFnMap = Map.of(
+            TokenType.PLUS, this::parseInfixExpression,
+            TokenType.MINUS, this::parseInfixExpression,
+            TokenType.ASTERISK, this::parseInfixExpression,
+            TokenType.SLASH, this::parseInfixExpression,
+            TokenType.CARET, this::parseInfixExpression
+    );
 
     public Parser(Lexer lexer) {
         this.lexer = lexer;
@@ -86,6 +92,7 @@ public class Parser {
             if (infix == null) {
                 return leftExp;
             }
+            nextToken();
             leftExp = infix.parse(leftExp);
         }
 
@@ -110,6 +117,13 @@ public class Parser {
         nextToken();
         Expression right = parseExpression(Precedence.PREFIX);
         return new PrefixExpression(token, token.getLiteral(), right);
+    }
+
+    private Expression parseInfixExpression(Expression left) {
+        Token token = curToken;
+        nextToken();
+        Expression right = parseExpression(Precedence.LOWEST);
+        return new InfixExpression(token, token.getLiteral(), left, right);
     }
 
     private void noPrefixParseFnError(Token token) {

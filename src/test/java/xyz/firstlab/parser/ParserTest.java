@@ -79,6 +79,33 @@ class ParserTest {
         testPrefixExpression(expressions.get(0), operator, new BigDecimal(value));
     }
 
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    5 + 10 | + | 5 | 10
+                    5 - 10 | - | 5 | 10
+                    5 * 10 | * | 5 | 10
+                    5 / 10 | / | 5 | 10
+                    5 ^ 10 | ^ | 5 | 10
+                    """
+    )
+    void infixExpressionParsing(String input, String operator, String left, String right) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new Parser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        testInfixExpression(expressions.get(0), operator, new BigDecimal(left), new BigDecimal(right));
+    }
+
     void checkParserErrors(Parser parser) {
         List<String> errorStrings = parser.getErrors().stream().map(ParsingError::toString).toList();
 
@@ -133,6 +160,32 @@ class ParserTest {
             testNumberLiteral(prefix.getRight(), expected);
         } else {
             fail("type of right is not handled.\n got: %s", right.getClass());
+        }
+    }
+
+    private void testInfixExpression(Expression exp, String operator, Object left, Object right) {
+        assertThat(exp)
+                .withFailMessage("exp type is wrong.\n expected: InfixExpression, got: %s", exp.getClass())
+                .isInstanceOf(InfixExpression.class);
+
+        InfixExpression infix = (InfixExpression) exp;
+        assertThat(infix.getOperator())
+                .withFailMessage(
+                        "infix.operator is wrong.\n expected: %s, got: %s",
+                        operator,
+                        infix.getOperator())
+                .isEqualTo(operator);
+
+        if (left instanceof BigDecimal expected) {
+            testNumberLiteral(infix.getLeft(), expected);
+        } else {
+            fail("type of left is not handled.\n got: %s", left.getClass());
+        }
+
+        if (right instanceof BigDecimal expected) {
+            testNumberLiteral(infix.getRight(), expected);
+        } else {
+            fail("type of left is not handled.\n got: %s", left.getClass());
         }
     }
 

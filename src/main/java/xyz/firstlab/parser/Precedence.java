@@ -11,9 +11,10 @@ public enum Precedence {
     LESS_GREATER(2),
     SUM(3),
     PRODUCT(4),
-    PREFIX(5),
-    CALL(6),
-    INDEX(7),
+    POWER(5),
+    PREFIX(6),
+    CALL(7),
+    INDEX(8),
     ;
 
     private static final Map<TokenType, Precedence> TOKEN_TYPE_PRECEDENCE_MAP = Map.ofEntries(
@@ -27,6 +28,7 @@ public enum Precedence {
             Map.entry(TokenType.MINUS, SUM),
             Map.entry(TokenType.ASTERISK, PRODUCT),
             Map.entry(TokenType.SLASH, PRODUCT),
+            Map.entry(TokenType.CARET, POWER),
             Map.entry(TokenType.LPAREN, CALL)
     );
 

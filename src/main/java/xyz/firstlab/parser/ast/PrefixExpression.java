@@ -2,16 +2,14 @@ package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.token.Token;
 
-public class PrefixExpression implements Expression {
-
-    private final Token token;
+public class PrefixExpression extends Expression {
 
     private final String operator;
 
     private final Expression right;
 
     public PrefixExpression(Token token, String operator, Expression right) {
-        this.token = token;
+        super(token);
         this.operator = operator;
         this.right = right;
     }
@@ -22,11 +20,6 @@ public class PrefixExpression implements Expression {
 
     public Expression getRight() {
         return right;
-    }
-
-    @Override
-    public String tokenLiteral() {
-        return token.getLiteral();
     }
 
     @Override

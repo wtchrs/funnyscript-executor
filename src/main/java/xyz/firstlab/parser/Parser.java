@@ -1,13 +1,15 @@
 package xyz.firstlab.parser;
 
 import xyz.firstlab.parser.ast.*;
+import xyz.firstlab.parser.parselet.InfixParselet;
+import xyz.firstlab.parser.parselet.PrefixParselet;
 import xyz.firstlab.token.Lexer;
 import xyz.firstlab.token.Token;
 import xyz.firstlab.token.TokenType;
 
 import java.util.*;
 
-public class Parser {
+public abstract class Parser {
 
     private final Lexer lexer;
 
@@ -17,20 +19,9 @@ public class Parser {
 
     private Token peekToken;
 
-    private final Map<TokenType, PrefixParseFn> prefixParseFnMap = Map.of(
-            TokenType.NUMBER, this::parseNumber,
-            TokenType.IDENT, this::parseIdentifier,
-            TokenType.PLUS, this::parsePrefixExpression,
-            TokenType.MINUS, this::parsePrefixExpression
-    );
+    private final Map<TokenType, PrefixParselet> prefixParseletMap = new HashMap<>();
 
-    private final Map<TokenType, InfixParseFn> infixParseFnMap = Map.of(
-            TokenType.PLUS, this::parseInfixExpression,
-            TokenType.MINUS, this::parseInfixExpression,
-            TokenType.ASTERISK, this::parseInfixExpression,
-            TokenType.SLASH, this::parseInfixExpression,
-            TokenType.CARET, this::parseInfixExpression
-    );
+    private final Map<TokenType, InfixParselet> infixParseletMap = new HashMap<>();
 
     public Parser(Lexer lexer) {
         this.lexer = lexer;
@@ -54,11 +45,52 @@ public class Parser {
         return program;
     }
 
+    // Pratt parser
+    public Expression parseExpression(Precedence precedence) {
+        PrefixParselet prefix = prefixParseletMap.get(curToken.getType());
+        if (prefix == null) {
+            appendError(noPrefixParseletError(curToken));
+            return null;
+        }
+        Expression leftExp = prefix.parse(this);
+
+        while (!peekTokenIs(TokenType.NEWLINE) && precedence.getValue() < peekPrecedence().getValue()) {
+            InfixParselet infix = infixParseletMap.get(peekToken.getType());
+            if (infix == null) {
+                return leftExp;
+            }
+            nextToken();
+            leftExp = infix.parse(this, leftExp);
+        }
+
+        return leftExp;
+    }
+
     public List<ParsingError> getErrors() {
         return Collections.unmodifiableList(errors);
     }
 
-    private void nextToken() {
+    public void appendError(ParsingError error) {
+        errors.add(error);
+    }
+
+    public Token getCurToken() {
+        return curToken;
+    }
+
+    public Token getPeekToken() {
+        return peekToken;
+    }
+
+    protected void register(TokenType type, PrefixParselet parselet) {
+        this.prefixParseletMap.put(type, parselet);
+    }
+
+    protected void register(TokenType type, InfixParselet parselet) {
+        this.infixParseletMap.put(type, parselet);
+    }
+
+    public void nextToken() {
         curToken = peekToken;
         peekToken = lexer.nextToken();
     }
@@ -72,74 +104,25 @@ public class Parser {
     }
 
     private Precedence curPrecendence() {
-        return Precedence.getPrecedence(curToken.getType());
+        if (infixParseletMap.containsKey(curToken.getType())) {
+            return infixParseletMap.get(curToken.getType()).getPrecedence();
+        }
+        return Precedence.LOWEST;
     }
 
     private Precedence peekPrecedence() {
-        return Precedence.getPrecedence(peekToken.getType());
-    }
-
-    private Expression parseExpression(Precedence precedence) {
-        PrefixParseFn prefix = prefixParseFnMap.get(curToken.getType());
-        if (prefix == null) {
-            noPrefixParseFnError(curToken);
-            return null;
+        if (infixParseletMap.containsKey(peekToken.getType())) {
+            return infixParseletMap.get(peekToken.getType()).getPrecedence();
         }
-        Expression leftExp = prefix.parse();
-
-        while (!peekTokenIs(TokenType.NEWLINE) && precedence.getValue() < peekPrecedence().getValue()) {
-            InfixParseFn infix = infixParseFnMap.get(peekToken.getType());
-            if (infix == null) {
-                return leftExp;
-            }
-            nextToken();
-            leftExp = infix.parse(leftExp);
-        }
-
-        return leftExp;
+        return Precedence.LOWEST;
     }
 
-    private Expression parseNumber() {
-        try {
-            return new NumberLiteral(curToken, curToken.getLiteral());
-        } catch (NumberFormatException e) {
-            wrongNumberFormatError(curToken);
-            return null;
-        }
-    }
-
-    private Expression parseIdentifier() {
-        return new Identifier(curToken, curToken.getLiteral());
-    }
-
-    private Expression parsePrefixExpression() {
-        Token token = curToken;
-        nextToken();
-        Expression right = parseExpression(Precedence.PREFIX);
-        return new PrefixExpression(token, token.getLiteral(), right);
-    }
-
-    private Expression parseInfixExpression(Expression left) {
-        Token token = curToken;
-        nextToken();
-        Expression right = parseExpression(Precedence.LOWEST);
-        return new InfixExpression(token, token.getLiteral(), left, right);
-    }
-
-    private void noPrefixParseFnError(Token token) {
-        errors.add(new ParsingError(
+    private ParsingError noPrefixParseletError(Token token) {
+        return new ParsingError(
                 token.getLineNumber(),
                 token.getColumnNumber(),
                 String.format("No prefix parse function for %s found.", token.getType())
-        ));
-    }
-
-    private void wrongNumberFormatError(Token token) {
-        errors.add(new ParsingError(
-                token.getLineNumber(),
-                token.getColumnNumber(),
-                String.format("Could not parse `%s` as Number.", token.getLiteral())
-        ));
+        );
     }
 
 }

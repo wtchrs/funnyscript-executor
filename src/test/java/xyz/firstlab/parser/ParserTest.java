@@ -19,7 +19,7 @@ class ParserTest {
 
         for (String test : tests) {
             Lexer lexer = new Lexer(test);
-            Parser parser = new Parser(lexer);
+            Parser parser = new DefaultParser(lexer);
             Program program = parser.parseProgram();
             checkParserErrors(parser);
 
@@ -40,7 +40,7 @@ class ParserTest {
 
         for (String test : tests) {
             Lexer lexer = new Lexer(test);
-            Parser parser = new Parser(lexer);
+            Parser parser = new DefaultParser(lexer);
             Program program = parser.parseProgram();
             checkParserErrors(parser);
 
@@ -65,7 +65,7 @@ class ParserTest {
     )
     void prefixExpressionParsing(String input, String operator, String value) {
         Lexer lexer = new Lexer(input);
-        Parser parser = new Parser(lexer);
+        Parser parser = new DefaultParser(lexer);
         Program program = parser.parseProgram();
         checkParserErrors(parser);
 
@@ -92,7 +92,7 @@ class ParserTest {
     )
     void infixExpressionParsing(String input, String operator, String left, String right) {
         Lexer lexer = new Lexer(input);
-        Parser parser = new Parser(lexer);
+        Parser parser = new DefaultParser(lexer);
         Program program = parser.parseProgram();
         checkParserErrors(parser);
 

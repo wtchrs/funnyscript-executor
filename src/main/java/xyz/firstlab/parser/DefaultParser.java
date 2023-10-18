@@ -1,9 +1,6 @@
 package xyz.firstlab.parser;
 
-import xyz.firstlab.parser.parselet.IdentifierParselet;
-import xyz.firstlab.parser.parselet.BinaryOperatorParselet;
-import xyz.firstlab.parser.parselet.NumberParselet;
-import xyz.firstlab.parser.parselet.PrefixOperatorParselet;
+import xyz.firstlab.parser.parselet.*;
 import xyz.firstlab.token.Lexer;
 import xyz.firstlab.token.TokenType;
 
@@ -14,11 +11,20 @@ public class DefaultParser extends Parser {
 
         // register PrefixParselet
         register(TokenType.NUMBER, new NumberParselet());
+        register(TokenType.TRUE, new BooleanParselet());
+        register(TokenType.FALSE, new BooleanParselet());
         register(TokenType.IDENT, new IdentifierParselet());
         register(TokenType.PLUS, new PrefixOperatorParselet());
         register(TokenType.MINUS, new PrefixOperatorParselet());
+        register(TokenType.NOT, new PrefixOperatorParselet());
 
         // register InfixParselet
+        register(TokenType.EQ, new BinaryOperatorParselet(Precedence.EQUALS));
+        register(TokenType.NOT_EQ, new BinaryOperatorParselet(Precedence.EQUALS));
+        register(TokenType.LT, new BinaryOperatorParselet(Precedence.LESS_GREATER));
+        register(TokenType.LTE, new BinaryOperatorParselet(Precedence.LESS_GREATER));
+        register(TokenType.GT, new BinaryOperatorParselet(Precedence.LESS_GREATER));
+        register(TokenType.GTE, new BinaryOperatorParselet(Precedence.LESS_GREATER));
         register(TokenType.PLUS, new BinaryOperatorParselet(Precedence.SUM));
         register(TokenType.MINUS, new BinaryOperatorParselet(Precedence.SUM));
         register(TokenType.ASTERISK, new BinaryOperatorParselet(Precedence.PRODUCT));

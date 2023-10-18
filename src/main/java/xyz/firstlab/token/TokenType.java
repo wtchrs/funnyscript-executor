@@ -16,7 +16,8 @@ public enum TokenType {
     ASTERISK("*"),
     SLASH("/"),
     CARET("^"),
-    BANG("!"),
+//    BANG("!"),
+    NOT("NOT"),
     LT("<"),
     LTE("<="),
     GT(">"),
@@ -29,6 +30,8 @@ public enum TokenType {
     EQ("=="),
     NOT_EQ("/="),
     ARROW("->"),
+    TRUE("TRUE"),
+    FALSE("FALSE"),
     CASE("CASE"),
     DEFAULT("DEFAULT"),
     ;
@@ -36,6 +39,9 @@ public enum TokenType {
     private final String value;
 
     private static final Map<String, TokenType> keywords = Map.of(
+            "not", TokenType.NOT,
+            "true", TokenType.TRUE,
+            "false", TokenType.FALSE,
             "case", TokenType.CASE,
             "default", TokenType.DEFAULT
     );

@@ -31,6 +31,7 @@ public class InfixExpression extends Expression {
 
     @Override
     public String string() {
-        return String.format("%s %s %s", left.string(), operator, right.string());
+        return String.format("(%s %s %s)", left.string(), operator, right.string());
     }
+
 }

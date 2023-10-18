@@ -1,12 +1,15 @@
 package xyz.firstlab.parser;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.token.Lexer;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -31,6 +34,30 @@ class ParserTest {
     }
 
     @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    true | true
+                    false | false
+                    """
+    )
+    void booleanLiteralParsing(String input, boolean value) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        testBooleanLiteral(expressions.get(0), value);
+    }
+
+    @ParameterizedTest
     @CsvSource({"foo", "bar"})
     void identifierParsing(String input) {
         Lexer lexer = new Lexer(input);
@@ -48,15 +75,17 @@ class ParserTest {
         testIdentifier(expressions.get(0), input);
     }
 
+    static Stream<Arguments> providePrefixExpressionParsingArguments() {
+        return Stream.of(
+                Arguments.of("+15", "+", new BigDecimal("15")),
+                Arguments.of("-15", "-", new BigDecimal("15")),
+                Arguments.of("not true", "not", true)
+        );
+    }
+
     @ParameterizedTest
-    @CsvSource(
-            delimiter = '|',
-            textBlock = """
-                    +15 | + | 15
-                    -15 | - | 15
-                    """
-    )
-    void prefixExpressionParsing(String input, String operator, String value) {
+    @MethodSource("providePrefixExpressionParsingArguments")
+    void prefixExpressionParsing(String input, String operator, Object value) {
         Lexer lexer = new Lexer(input);
         Parser parser = new DefaultParser(lexer);
         Program program = parser.parseProgram();
@@ -69,7 +98,7 @@ class ParserTest {
                         expressions.size())
                 .hasSize(1);
 
-        testPrefixExpression(expressions.get(0), operator, new BigDecimal(value));
+        testPrefixExpression(expressions.get(0), operator, value);
     }
 
     @ParameterizedTest
@@ -81,6 +110,10 @@ class ParserTest {
                     5 * 10 | * | 5 | 10
                     5 / 10 | / | 5 | 10
                     5 ^ 10 | ^ | 5 | 10
+                    5 < 10 | < | 5 | 10
+                    5 > 10 | > | 5 | 10
+                    5 <= 10 | <= | 5 | 10
+                    5 >= 10 | >= | 5 | 10
                     """
     )
     void infixExpressionParsing(String input, String operator, String left, String right) {
@@ -97,6 +130,44 @@ class ParserTest {
                 .hasSize(1);
 
         testInfixExpression(expressions.get(0), operator, new BigDecimal(left), new BigDecimal(right));
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    -a * b | ((-a) * b)
+                    a + b + c | ((a + b) + c)
+                    a + b - c | ((a + b) - c)
+                    a * b * c | ((a * b) * c)
+                    a * b / c | ((a * b) / c)
+                    a + b / c | (a + (b / c))
+                    a + b * c + d / e - f | (((a + (b * c)) + (d / e)) - f)
+                    5 > 4 == 3 < 4 | ((5 > 4) == (3 < 4))
+                    5 < 4 /= 3 > 4 | ((5 < 4) /= (3 > 4))
+                    3 + 4 * 5 == 3 * 1 + 4 * 5 | ((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))
+                    3 > 5 == false | ((3 > 5) == false)
+                    3 < 5 == true | ((3 < 5) == true)
+                    true == 3 < 5 | (true == (3 < 5))
+                    """
+    )
+    void operatorPrecedenceParsing(String input, String expected) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        String result = expressions.get(0).string();
+        assertThat(result)
+                .withFailMessage("Parsing result is wrong. expected: %s, got: %s", expected, result)
+                .isEqualTo(expected);
     }
 
     void checkParserErrors(Parser parser) {
@@ -120,6 +191,17 @@ class ParserTest {
                 .isInstanceOf(NumberLiteral.class);
 
         BigDecimal value = ((NumberLiteral) exp).getValue();
+        assertThat(value)
+                .withFailMessage("literal.value is wrong.\n expected: %s, got: %s", expected, value)
+                .isEqualTo(expected);
+    }
+
+    private static void testBooleanLiteral(Expression exp, boolean expected) {
+        assertThat(exp)
+                .withFailMessage("exp type is wrong.\n expected: BooleanLiteral, got: %s", exp.getClass())
+                .isInstanceOf(BooleanLiteral.class);
+
+        boolean value = ((BooleanLiteral) exp).getValue();
         assertThat(value)
                 .withFailMessage("literal.value is wrong.\n expected: %s, got: %s", expected, value)
                 .isEqualTo(expected);
@@ -151,6 +233,8 @@ class ParserTest {
 
         if (right instanceof BigDecimal expected) {
             testNumberLiteral(prefix.getRight(), expected);
+        } else if (right instanceof Boolean expected) {
+            testBooleanLiteral(prefix.getRight(), expected);
         } else {
             fail("type of right is not handled.\n got: %s", right.getClass());
         }

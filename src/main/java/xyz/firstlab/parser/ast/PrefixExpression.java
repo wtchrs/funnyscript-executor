@@ -25,8 +25,9 @@ public class PrefixExpression extends Expression {
     @Override
     public String string() {
         if (operator.length() > 1) {
-            return operator + " " + right.string();
+            return String.format("(%s %s)", operator, right.string());
         }
-        return operator + right.string();
+        return String.format("(%s%s)", operator, right.string());
     }
+
 }

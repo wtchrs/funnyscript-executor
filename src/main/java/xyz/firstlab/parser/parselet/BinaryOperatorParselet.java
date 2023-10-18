@@ -18,7 +18,7 @@ public class BinaryOperatorParselet implements InfixParselet {
     public Expression parse(Parser parser, Expression left) {
         Token token = parser.getCurToken();
         parser.nextToken();
-        Expression right = parser.parseExpression(Precedence.LOWEST);
+        Expression right = parser.parseExpression(precedence);
         return new InfixExpression(token, token.getLiteral(), left, right);
     }
 

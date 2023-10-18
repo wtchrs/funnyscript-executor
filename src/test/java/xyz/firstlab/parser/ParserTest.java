@@ -1,6 +1,5 @@
 package xyz.firstlab.parser;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import xyz.firstlab.parser.ast.*;
@@ -13,46 +12,40 @@ import static org.assertj.core.api.Assertions.*;
 
 class ParserTest {
 
-    @Test
-    void numberLiteralParsing() {
-        List<String> tests = List.of("5", "10", "0", "0.1", "1.", "1.0", ".1");
+    @ParameterizedTest
+    @CsvSource({"5", "10", "0", "0.1", "1.", "1.0", ".1"})
+    void numberLiteralParsing(String input) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
 
-        for (String test : tests) {
-            Lexer lexer = new Lexer(test);
-            Parser parser = new DefaultParser(lexer);
-            Program program = parser.parseProgram();
-            checkParserErrors(parser);
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
 
-            List<Expression> expressions = program.getExpressions();
-            assertThat(expressions)
-                    .withFailMessage(
-                            "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
-                            expressions.size())
-                    .hasSize(1);
-
-            testNumberLiteral(expressions.get(0), test);
-        }
+        testNumberLiteral(expressions.get(0), input);
     }
 
-    @Test
-    void identifierParsing() {
-        List<String> tests = List.of("foo", "bar");
+    @ParameterizedTest
+    @CsvSource({"foo", "bar"})
+    void identifierParsing(String input) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
 
-        for (String test : tests) {
-            Lexer lexer = new Lexer(test);
-            Parser parser = new DefaultParser(lexer);
-            Program program = parser.parseProgram();
-            checkParserErrors(parser);
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
 
-            List<Expression> expressions = program.getExpressions();
-            assertThat(expressions)
-                    .withFailMessage(
-                            "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
-                            expressions.size())
-                    .hasSize(1);
-
-            testIdentifier(expressions.get(0), test);
-        }
+        testIdentifier(expressions.get(0), input);
     }
 
     @ParameterizedTest

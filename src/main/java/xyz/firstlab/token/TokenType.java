@@ -4,12 +4,12 @@ import java.util.Map;
 
 public enum TokenType {
 
-    ILLEGAL("ILLEGAL"),
-    EOF("EOF"),
+    ILLEGAL("<ILLEGAL>"),
+    EOF("<EOF>"),
     NEWLINE("\\n"),
-    IDENT("IDENT"),
-    NUMBER("NUMBER"),
-    STRING("STRING"),
+    IDENT("<IDENT>"),
+    NUMBER("<NUMBER>"),
+    STRING("<STRING>"),
     ASSIGN("="),
     PLUS("+"),
     MINUS("-"),
@@ -17,7 +17,7 @@ public enum TokenType {
     SLASH("/"),
     CARET("^"),
 //    BANG("!"),
-    NOT("NOT"),
+    NOT("not"),
     LT("<"),
     LTE("<="),
     GT(">"),
@@ -30,10 +30,10 @@ public enum TokenType {
     EQ("=="),
     NOT_EQ("/="),
     ARROW("->"),
-    TRUE("TRUE"),
-    FALSE("FALSE"),
-    CASE("CASE"),
-    DEFAULT("DEFAULT"),
+    TRUE("true"),
+    FALSE("false"),
+    CASE("case"),
+    DEFAULT("default"),
     ;
 
     private final String value;

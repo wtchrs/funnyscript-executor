@@ -82,17 +82,26 @@ public abstract class Parser {
         return peekToken;
     }
 
+    public boolean expectPeek(TokenType tokenType) {
+        if (peekTokenIs(tokenType)) {
+            nextToken();
+            return true;
+        }
+        appendError(notExpectedTokenError(tokenType, peekToken));
+        return false;
+    }
+
+    public void nextToken() {
+        curToken = peekToken;
+        peekToken = lexer.nextToken();
+    }
+
     protected void register(TokenType type, PrefixParselet parselet) {
         this.prefixParseletMap.put(type, parselet);
     }
 
     protected void register(TokenType type, InfixParselet parselet) {
         this.infixParseletMap.put(type, parselet);
-    }
-
-    public void nextToken() {
-        curToken = peekToken;
-        peekToken = lexer.nextToken();
     }
 
     private boolean curTokenIs(TokenType type) {
@@ -121,7 +130,15 @@ public abstract class Parser {
         return new ParsingError(
                 token.getLineNumber(),
                 token.getColumnNumber(),
-                String.format("No prefix parse function for %s found.", token.getType())
+                String.format("No prefix parse function for '%s' found.", token.getType().getValue())
+        );
+    }
+
+    private ParsingError notExpectedTokenError(TokenType expected, Token token) {
+        return new ParsingError(
+                token.getLineNumber(),
+                token.getColumnNumber(),
+                String.format("Expected '%s', but got '%s' instead.", expected.getValue(), token.getType().getValue())
         );
     }
 

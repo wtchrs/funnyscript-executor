@@ -149,6 +149,11 @@ class ParserTest {
                     3 > 5 == false | ((3 > 5) == false)
                     3 < 5 == true | ((3 < 5) == true)
                     true == 3 < 5 | (true == (3 < 5))
+                    1 + (2 + 3) + 4 | ((1 + (2 + 3)) + 4)
+                    (5 + 5) * 2 | ((5 + 5) * 2)
+                    2 / ( 5 + 5) | (2 / (5 + 5))
+                    -(5 + 5) | (-(5 + 5))
+                    not (true == true) | (not (true == true))
                     """
     )
     void operatorPrecedenceParsing(String input, String expected) {
@@ -231,16 +236,12 @@ class ParserTest {
                         prefix.getOperator())
                 .isEqualTo(operator);
 
-        if (right instanceof BigDecimal expected) {
-            testNumberLiteral(prefix.getRight(), expected);
-        } else if (right instanceof Boolean expected) {
-            testBooleanLiteral(prefix.getRight(), expected);
-        } else {
-            fail("type of right is not handled.\n got: %s", right.getClass());
-        }
+        testOperand(prefix.getRight(), right);
     }
 
     private void testInfixExpression(Expression exp, String operator, Object left, Object right) {
+        assert left.getClass() == right.getClass();
+
         assertThat(exp)
                 .withFailMessage("exp type is wrong.\n expected: InfixExpression, got: %s", exp.getClass())
                 .isInstanceOf(InfixExpression.class);
@@ -253,16 +254,17 @@ class ParserTest {
                         infix.getOperator())
                 .isEqualTo(operator);
 
-        if (left instanceof BigDecimal expected) {
-            testNumberLiteral(infix.getLeft(), expected);
-        } else {
-            fail("type of left is not handled.\n got: %s", left.getClass());
-        }
+        testOperand(infix.getLeft(), left);
+        testOperand(infix.getRight(), right);
+    }
 
-        if (right instanceof BigDecimal expected) {
-            testNumberLiteral(infix.getRight(), expected);
+    private static void testOperand(Expression value, Object expectedValue) {
+        if (expectedValue instanceof BigDecimal expected) {
+            testNumberLiteral(value, expected);
+        } else if (expectedValue instanceof Boolean expected) {
+            testBooleanLiteral(value, expected);
         } else {
-            fail("type of left is not handled.\n got: %s", left.getClass());
+            fail("type of expectedValue is not handled.\n got: %s", expectedValue.getClass());
         }
     }
 

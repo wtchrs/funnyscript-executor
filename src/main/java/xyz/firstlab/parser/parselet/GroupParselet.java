@@ -10,7 +10,7 @@ public class GroupParselet implements PrefixParselet {
     @Override
     public Expression parse(Parser parser) {
         parser.nextToken();
-        Expression exp = parser.parseExpression(Precedence.LOWEST);
+        Expression exp = parser.parseExpression(Precedence.LOWEST.getValue());
         if (!parser.expectPeek(TokenType.RPAREN)) {
             return null;
         }

@@ -16,6 +16,14 @@ public class FunctionExpression extends Expression {
         this.arguments = arguments;
     }
 
+    public Expression getFunction() {
+        return function;
+    }
+
+    public List<Expression> getArguments() {
+        return arguments;
+    }
+
     @Override
     public String string() {
         List<String> argumentStrings = arguments.stream().map(Expression::string).toList();

@@ -1,5 +1,6 @@
 package xyz.firstlab.parser;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -101,6 +102,25 @@ class ParserTest {
         testPrefixExpression(expressions.get(0), operator, value);
     }
 
+    @Test
+    void assignExpressionParsing() {
+        String input = "x = 10";
+
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        testInfixExpression(expressions.get(0), "=", "x", new BigDecimal("10"));
+    }
+
     @ParameterizedTest
     @CsvSource(
             delimiter = '|',
@@ -154,6 +174,8 @@ class ParserTest {
                     2 / ( 5 + 5) | (2 / (5 + 5))
                     -(5 + 5) | (-(5 + 5))
                     not (true == true) | (not (true == true))
+                    x = y = 10 | (x = (y = 10))
+                    x = y = 5 + 10 * 2 | (x = (y = (5 + (10 * 2))))
                     a + add(b * c) + d | ((a + add((b * c))) + d)
                     add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8)) | add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))
                     add(a + b + c * d / f + g) | add((((a + b) + ((c * d) / f)) + g))
@@ -185,7 +207,7 @@ class ParserTest {
                 .withFailMessage(() -> String.format(
                         "parser has %d errors:\n%s",
                         errorStrings.size(),
-                        String.join("\n    ", errorStrings)))
+                        String.join("\n", errorStrings)))
                 .hasSize(0);
     }
 
@@ -215,7 +237,7 @@ class ParserTest {
                 .isEqualTo(expected);
     }
 
-    private void testIdentifier(Expression exp, String expected) {
+    private static void testIdentifier(Expression exp, String expected) {
         assertThat(exp)
                 .withFailMessage("exp type is wrong.\n expected: Identifier, got: %s", exp.getClass())
                 .isInstanceOf(Identifier.class);
@@ -226,7 +248,7 @@ class ParserTest {
                 .isEqualTo(expected);
     }
 
-    private void testPrefixExpression(Expression exp, String operator, Object right) {
+    private static void testPrefixExpression(Expression exp, String operator, Object right) {
         assertThat(exp)
                 .withFailMessage("exp type is wrong.\n expected: PrefixExpression, got: %s", exp.getClass())
                 .isInstanceOf(PrefixExpression.class);
@@ -242,9 +264,7 @@ class ParserTest {
         testOperand(prefix.getRight(), right);
     }
 
-    private void testInfixExpression(Expression exp, String operator, Object left, Object right) {
-        assert left.getClass() == right.getClass();
-
+    private static void testInfixExpression(Expression exp, String operator, Object left, Object right) {
         assertThat(exp)
                 .withFailMessage("exp type is wrong.\n expected: InfixExpression, got: %s", exp.getClass())
                 .isInstanceOf(InfixExpression.class);
@@ -266,7 +286,9 @@ class ParserTest {
             testNumberLiteral(value, expected);
         } else if (expectedValue instanceof Boolean expected) {
             testBooleanLiteral(value, expected);
-        } else {
+        } else if (expectedValue instanceof String expected) {
+            testIdentifier(value, expected);
+        }else {
             fail("type of expectedValue is not handled.\n got: %s", expectedValue.getClass());
         }
     }

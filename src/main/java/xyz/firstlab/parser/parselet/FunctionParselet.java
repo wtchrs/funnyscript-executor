@@ -12,12 +12,6 @@ import java.util.List;
 
 public class FunctionParselet implements InfixParselet {
 
-    private final Precedence precedence;
-
-    public FunctionParselet(Precedence precedence) {
-        this.precedence = precedence;
-    }
-
     @Override
     public Expression parse(Parser parser, Expression left) {
         Token curToken = parser.getCurToken();
@@ -26,7 +20,7 @@ public class FunctionParselet implements InfixParselet {
         while (!parser.peekTokenIs(TokenType.EOF) && !parser.peekTokenIs(TokenType.RPAREN)) {
             parser.nextToken();
 
-            Expression exp = parser.parseExpression(Precedence.LOWEST);
+            Expression exp = parser.parseExpression(Precedence.LOWEST.getValue());
             params.add(exp);
 
             if (parser.peekTokenIs(TokenType.COMMA)) {
@@ -43,7 +37,7 @@ public class FunctionParselet implements InfixParselet {
 
     @Override
     public Precedence getPrecedence() {
-        return precedence;
+        return Precedence.FUNCTION;
     }
 
 }

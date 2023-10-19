@@ -1,13 +1,15 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.token.Token;
+
 public interface Node {
 
     /**
-     * Return the first token's literal of the node.
+     * Return the token of the node.
      *
      * @return first token's literal.
      */
-    String tokenLiteral();
+    Token token();
 
     /**
      * Return a string that describe the state of ast node.

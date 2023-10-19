@@ -20,18 +20,27 @@ public class DefaultParser extends Parser {
         register(TokenType.LPAREN, new GroupParselet());
 
         // register InfixParselet
-        register(TokenType.EQ, new BinaryOperatorParselet(Precedence.EQUALS));
-        register(TokenType.NOT_EQ, new BinaryOperatorParselet(Precedence.EQUALS));
-        register(TokenType.LT, new BinaryOperatorParselet(Precedence.LESS_GREATER));
-        register(TokenType.LTE, new BinaryOperatorParselet(Precedence.LESS_GREATER));
-        register(TokenType.GT, new BinaryOperatorParselet(Precedence.LESS_GREATER));
-        register(TokenType.GTE, new BinaryOperatorParselet(Precedence.LESS_GREATER));
-        register(TokenType.PLUS, new BinaryOperatorParselet(Precedence.SUM));
-        register(TokenType.MINUS, new BinaryOperatorParselet(Precedence.SUM));
-        register(TokenType.ASTERISK, new BinaryOperatorParselet(Precedence.PRODUCT));
-        register(TokenType.SLASH, new BinaryOperatorParselet(Precedence.PRODUCT));
-        register(TokenType.CARET, new BinaryOperatorParselet(Precedence.POWER));
-        register(TokenType.LPAREN, new FunctionParselet(Precedence.FUNCTION));
+        register(TokenType.ASSIGN, new AssignExpressionParselet());
+        register(TokenType.LPAREN, new FunctionParselet());
+        infixLeft(TokenType.EQ, Precedence.EQUALS);
+        infixLeft(TokenType.NOT_EQ, Precedence.EQUALS);
+        infixLeft(TokenType.LT, Precedence.LESS_GREATER);
+        infixLeft(TokenType.LTE, Precedence.LESS_GREATER);
+        infixLeft(TokenType.GT, Precedence.LESS_GREATER);
+        infixLeft(TokenType.GTE, Precedence.LESS_GREATER);
+        infixLeft(TokenType.PLUS, Precedence.SUM);
+        infixLeft(TokenType.MINUS, Precedence.SUM);
+        infixLeft(TokenType.ASTERISK, Precedence.PRODUCT);
+        infixLeft(TokenType.SLASH, Precedence.PRODUCT);
+        infixRight(TokenType.CARET, Precedence.EXPONENT);
+    }
+
+    private void infixLeft(TokenType type, Precedence precedence) {
+        register(type, new BinaryOperatorParselet(precedence, false));
+    }
+
+    private void infixRight(TokenType type, Precedence precedence) {
+        register(type, new BinaryOperatorParselet(precedence, true));
     }
 
 }

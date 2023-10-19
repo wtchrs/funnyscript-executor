@@ -10,15 +10,19 @@ public class BinaryOperatorParselet implements InfixParselet {
 
     private final Precedence precedence;
 
-    public BinaryOperatorParselet(Precedence precedence) {
+    private final boolean isRight;
+
+    public BinaryOperatorParselet(Precedence precedence, boolean isRight) {
         this.precedence = precedence;
+        this.isRight = isRight;
     }
 
     @Override
     public Expression parse(Parser parser, Expression left) {
         Token token = parser.getCurToken();
         parser.nextToken();
-        Expression right = parser.parseExpression(precedence);
+        int precedenceValue = precedence.getValue() - (isRight ? 1 : 0);
+        Expression right = parser.parseExpression(precedenceValue);
         return new InfixExpression(token, token.getLiteral(), left, right);
     }
 

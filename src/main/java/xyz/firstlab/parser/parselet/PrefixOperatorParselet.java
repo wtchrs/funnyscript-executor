@@ -12,7 +12,7 @@ public class PrefixOperatorParselet implements PrefixParselet {
     public Expression parse(Parser parser) {
         Token curToken = parser.getCurToken();
         parser.nextToken();
-        Expression right = parser.parseExpression(Precedence.PREFIX);
+        Expression right = parser.parseExpression(Precedence.PREFIX.getValue());
         return new PrefixExpression(curToken, curToken.getLiteral(), right);
     }
 

@@ -33,7 +33,7 @@ public abstract class Parser {
         Program program = new Program();
 
         while (!curTokenIs(TokenType.EOF)) {
-            Expression exp = parseExpression(Precedence.LOWEST);
+            Expression exp = parseExpression(Precedence.LOWEST.getValue());
 
             if (exp != null) {
                 program.append(exp);
@@ -46,7 +46,7 @@ public abstract class Parser {
     }
 
     // Pratt parser
-    public Expression parseExpression(Precedence precedence) {
+    public Expression parseExpression(int precedence) {
         PrefixParselet prefix = prefixParseletMap.get(curToken.getType());
         if (prefix == null) {
             appendError(noPrefixParseletError(curToken));
@@ -54,7 +54,7 @@ public abstract class Parser {
         }
         Expression leftExp = prefix.parse(this);
 
-        while (!peekTokenIs(TokenType.NEWLINE) && precedence.getValue() < peekPrecedence().getValue()) {
+        while (!peekTokenIs(TokenType.NEWLINE) && precedence < peekPrecedence().getValue()) {
             InfixParselet infix = infixParseletMap.get(peekToken.getType());
             if (infix == null) {
                 return leftExp;

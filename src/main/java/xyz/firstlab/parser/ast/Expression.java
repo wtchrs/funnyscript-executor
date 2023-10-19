@@ -11,8 +11,8 @@ public abstract class Expression implements Node {
     }
 
     @Override
-    public String tokenLiteral() {
-        return token.getLiteral();
+    public Token token() {
+        return token;
     }
 
 }

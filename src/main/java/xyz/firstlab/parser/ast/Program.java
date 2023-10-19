@@ -1,5 +1,7 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.token.Token;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,11 +19,11 @@ public class Program implements Node {
     }
 
     @Override
-    public String tokenLiteral() {
+    public Token token() {
         if (expressions.isEmpty()) {
-            return "";
+            return null;
         }
-        return expressions.get(0).string();
+        return expressions.get(0).token();
     }
 
     @Override

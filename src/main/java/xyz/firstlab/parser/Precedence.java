@@ -13,7 +13,7 @@ public enum Precedence {
     PRODUCT(4),
     POWER(5),
     PREFIX(6),
-    CALL(7),
+    FUNCTION(7),
     INDEX(8),
     ;
 
@@ -29,7 +29,7 @@ public enum Precedence {
             Map.entry(TokenType.ASTERISK, PRODUCT),
             Map.entry(TokenType.SLASH, PRODUCT),
             Map.entry(TokenType.CARET, POWER),
-            Map.entry(TokenType.LPAREN, CALL)
+            Map.entry(TokenType.LPAREN, FUNCTION)
     );
 
     public static Precedence getPrecedence(TokenType type) {

@@ -31,6 +31,7 @@ public class DefaultParser extends Parser {
         register(TokenType.ASTERISK, new BinaryOperatorParselet(Precedence.PRODUCT));
         register(TokenType.SLASH, new BinaryOperatorParselet(Precedence.PRODUCT));
         register(TokenType.CARET, new BinaryOperatorParselet(Precedence.POWER));
+        register(TokenType.LPAREN, new FunctionParselet(Precedence.FUNCTION));
     }
 
 }

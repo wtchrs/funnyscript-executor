@@ -82,6 +82,14 @@ public abstract class Parser {
         return peekToken;
     }
 
+    public boolean curTokenIs(TokenType type) {
+        return curToken.getType().equals(type);
+    }
+
+    public boolean peekTokenIs(TokenType type) {
+        return peekToken.getType().equals(type);
+    }
+
     public boolean expectPeek(TokenType tokenType) {
         if (peekTokenIs(tokenType)) {
             nextToken();
@@ -102,14 +110,6 @@ public abstract class Parser {
 
     protected void register(TokenType type, InfixParselet parselet) {
         this.infixParseletMap.put(type, parselet);
-    }
-
-    private boolean curTokenIs(TokenType type) {
-        return curToken.getType().equals(type);
-    }
-
-    private boolean peekTokenIs(TokenType type) {
-        return peekToken.getType().equals(type);
     }
 
     private Precedence curPrecendence() {

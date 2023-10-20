@@ -125,6 +125,33 @@ class ParserTest {
     @CsvSource(
             delimiter = '|',
             textBlock = """
+                    case x < 0 -> 5, x >= 0 -> 10 | (case ((x < 0) -> 5), ((x >= 0) -> 10))
+                    abs(x) = case x < 0 -> -x, default -> x | (abs(x) = (case ((x < 0) -> (-x)), (true -> x)))
+                    """
+    )
+    void caseExpressionParsing(String input, String expected) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        String result = expressions.get(0).string();
+        assertThat(result)
+                .withFailMessage("Parsing result is wrong. expected: %s, got: %s", expected, result)
+                .isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
                     5 + 10 | + | 5 | 10
                     5 - 10 | - | 5 | 10
                     5 * 10 | * | 5 | 10

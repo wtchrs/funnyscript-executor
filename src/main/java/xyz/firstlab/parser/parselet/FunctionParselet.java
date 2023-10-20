@@ -20,7 +20,7 @@ public class FunctionParselet implements InfixParselet {
         while (!parser.peekTokenIs(TokenType.EOF) && !parser.peekTokenIs(TokenType.RPAREN)) {
             parser.nextToken();
 
-            Expression exp = parser.parseExpression(Precedence.LOWEST.getValue());
+            Expression exp = parser.parseExpression(Precedence.LOWEST);
             params.add(exp);
 
             if (parser.peekTokenIs(TokenType.COMMA)) {

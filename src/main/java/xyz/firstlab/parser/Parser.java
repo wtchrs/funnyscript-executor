@@ -33,7 +33,7 @@ public abstract class Parser {
         Program program = new Program();
 
         while (!curTokenIs(TokenType.EOF)) {
-            Expression exp = parseExpression(Precedence.LOWEST.getValue());
+            Expression exp = parseExpression(Precedence.LOWEST);
 
             if (exp != null) {
                 program.append(exp);
@@ -43,6 +43,10 @@ public abstract class Parser {
         }
 
         return program;
+    }
+
+    public Expression parseExpression(Precedence precedence) {
+        return parseExpression(precedence.getValue());
     }
 
     // Pratt parser

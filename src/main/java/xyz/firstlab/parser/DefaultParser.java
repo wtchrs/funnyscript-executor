@@ -18,6 +18,7 @@ public class DefaultParser extends Parser {
         register(TokenType.MINUS, new PrefixOperatorParselet());
         register(TokenType.NOT, new PrefixOperatorParselet());
         register(TokenType.LPAREN, new GroupParselet());
+        register(TokenType.CASE, new CaseExpressionParselet());
 
         // register InfixParselet
         register(TokenType.ASSIGN, new AssignExpressionParselet());

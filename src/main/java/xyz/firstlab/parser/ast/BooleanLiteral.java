@@ -19,4 +19,5 @@ public class BooleanLiteral extends Expression {
     public String string() {
         return Boolean.toString(value);
     }
+
 }

@@ -27,44 +27,14 @@ public class Lexer {
         int columnNumber = this.columnNumber;
 
         switch (ch) {
-            case '=' -> {
-                if (peekChar() == '=') {
-                    token = new Token(TokenType.EQ, readTwoCharToken(), lineNumber, columnNumber);
-                } else {
-                    token = new Token(TokenType.ASSIGN, ch, lineNumber, columnNumber);
-                }
-            }
+            case '=' -> token = readTwoCharToken(TokenType.ASSIGN, TokenType.EQ, lineNumber, columnNumber, '=');
             case '+' -> token = new Token(TokenType.PLUS, ch, lineNumber, columnNumber);
-            case '-' -> {
-                if (peekChar() == '>') {
-                    token = new Token(TokenType.ARROW, readTwoCharToken(), lineNumber, columnNumber);
-                } else {
-                    token = new Token(TokenType.MINUS, ch, lineNumber, columnNumber);
-                }
-            }
+            case '-' -> token = readTwoCharToken(TokenType.MINUS, TokenType.ARROW, lineNumber, columnNumber, '>');
             case '*' -> token = new Token(TokenType.ASTERISK, ch, lineNumber, columnNumber);
-            case '/' -> {
-                if (peekChar() == '=') {
-                    token = new Token(TokenType.NOT_EQ, readTwoCharToken(), lineNumber, columnNumber);
-                } else {
-                    token = new Token(TokenType.SLASH, ch, lineNumber, columnNumber);
-                }
-            }
+            case '/' -> token = readTwoCharToken(TokenType.SLASH, TokenType.NOT_EQ, lineNumber, columnNumber, '=');
             case '^' -> token = new Token(TokenType.CARET, ch, lineNumber, columnNumber);
-            case '<' -> {
-                if (peekChar() == '=') {
-                    token = new Token(TokenType.LTE, readTwoCharToken(), lineNumber, columnNumber);
-                } else {
-                    token = new Token(TokenType.LT, ch, lineNumber, columnNumber);
-                }
-            }
-            case '>' -> {
-                if (peekChar() == '=') {
-                    token = new Token(TokenType.GTE, readTwoCharToken(), lineNumber, columnNumber);
-                } else {
-                    token = new Token(TokenType.GT, ch, lineNumber, columnNumber);
-                }
-            }
+            case '<' -> token = readTwoCharToken(TokenType.LT, TokenType.LTE, lineNumber, columnNumber, '=');
+            case '>' -> token = readTwoCharToken(TokenType.GT, TokenType.GTE, lineNumber, columnNumber, '=');
             case '(' -> token = new Token(TokenType.LPAREN, ch, lineNumber, columnNumber);
             case ')' -> token = new Token(TokenType.RPAREN, ch, lineNumber, columnNumber);
             case ',' -> token = new Token(TokenType.COMMA, ch, lineNumber, columnNumber);
@@ -115,10 +85,16 @@ public class Lexer {
         return input.charAt(readPosition);
     }
 
-    private String readTwoCharToken() {
-        char ch = this.ch;
-        readChar();
-        return String.valueOf(ch) + this.ch;
+    private Token readTwoCharToken(
+            TokenType singleCharTokenType, TokenType twoCharTokenType, int lineNumber, int columnNumber, char nextChar
+    ) {
+        if (peekChar() == nextChar) {
+            char currentChar = ch;
+            readChar();
+            return new Token(twoCharTokenType, String.valueOf(currentChar) + ch, lineNumber, columnNumber);
+        } else {
+            return new Token(singleCharTokenType, ch, lineNumber, columnNumber);
+        }
     }
 
     private String readIdentifier() {
@@ -175,4 +151,5 @@ public class Lexer {
             readChar();
         }
     }
+
 }

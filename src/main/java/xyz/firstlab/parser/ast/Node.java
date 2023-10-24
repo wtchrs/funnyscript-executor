@@ -1,5 +1,7 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
 public interface Node {
@@ -17,5 +19,7 @@ public interface Node {
      * @return description of ast node.
      */
     String string();
+
+    Value evaluate(Environment env);
 
 }

@@ -1,5 +1,8 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.NumberValue;
+import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
 import java.math.BigDecimal;
@@ -20,6 +23,11 @@ public class NumberLiteral extends Expression {
     @Override
     public String string() {
         return value.toString();
+    }
+
+    @Override
+    public Value evaluate(Environment env) {
+        return new NumberValue(value);
     }
 
 }

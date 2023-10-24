@@ -1,5 +1,7 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
 import java.util.List;
@@ -18,6 +20,11 @@ public class CaseExpression extends Expression {
     public String string() {
         String casesString = cases.stream().map(Case::toString).collect(Collectors.joining(", "));
         return String.format("(case %s)", casesString);
+    }
+
+    @Override
+    public Value evaluate(Environment env) {
+        throw new UnsupportedOperationException("Not implemented.");
     }
 
     public static class Case {

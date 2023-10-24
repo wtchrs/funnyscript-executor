@@ -1,5 +1,7 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
 import java.util.ArrayList;
@@ -33,6 +35,15 @@ public class Program implements Node {
             sb.append(exp.string()).append('\n');
         }
         return sb.toString();
+    }
+
+    @Override
+    public Value evaluate(Environment env) {
+        Value evaluated = null;
+        for (Expression exp : expressions) {
+            evaluated = exp.evaluate(env);
+        }
+        return evaluated;
     }
 
 }

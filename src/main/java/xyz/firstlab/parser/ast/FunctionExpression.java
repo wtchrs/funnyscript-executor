@@ -1,5 +1,7 @@
 package xyz.firstlab.parser.ast;
 
+import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
 import java.util.List;
@@ -29,6 +31,11 @@ public class FunctionExpression extends Expression {
         List<String> argumentStrings = arguments.stream().map(Expression::string).toList();
         String joinedString = String.join(", ", argumentStrings);
         return String.format("%s(%s)", function.string(), joinedString);
+    }
+
+    @Override
+    public Value evaluate(Environment env) {
+        throw new UnsupportedOperationException("Not implemented.");
     }
 
 }

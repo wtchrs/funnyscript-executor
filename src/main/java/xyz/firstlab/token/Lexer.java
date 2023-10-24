@@ -22,42 +22,38 @@ public class Lexer {
     public Token nextToken() {
         skipWhitespace();
 
-        Token token;
         int lineNumber = this.lineNumber;
         int columnNumber = this.columnNumber;
 
-        switch (ch) {
-            case '=' -> token = readTwoCharToken(TokenType.ASSIGN, TokenType.EQ, lineNumber, columnNumber, '=');
-            case '+' -> token = new Token(TokenType.PLUS, ch, lineNumber, columnNumber);
-            case '-' -> token = readTwoCharToken(TokenType.MINUS, TokenType.ARROW, lineNumber, columnNumber, '>');
-            case '*' -> token = new Token(TokenType.ASTERISK, ch, lineNumber, columnNumber);
-            case '/' -> token = readTwoCharToken(TokenType.SLASH, TokenType.NOT_EQ, lineNumber, columnNumber, '=');
-            case '^' -> token = new Token(TokenType.CARET, ch, lineNumber, columnNumber);
-            case '<' -> token = readTwoCharToken(TokenType.LT, TokenType.LTE, lineNumber, columnNumber, '=');
-            case '>' -> token = readTwoCharToken(TokenType.GT, TokenType.GTE, lineNumber, columnNumber, '=');
-            case '(' -> token = new Token(TokenType.LPAREN, ch, lineNumber, columnNumber);
-            case ')' -> token = new Token(TokenType.RPAREN, ch, lineNumber, columnNumber);
-            case ',' -> token = new Token(TokenType.COMMA, ch, lineNumber, columnNumber);
-            case '\"' -> token = readStringLiteralToken();
-            case '\n' -> token = new Token(TokenType.NEWLINE, ch, lineNumber, columnNumber);
-            case 0 -> token = new Token(TokenType.EOF, "", lineNumber, columnNumber);
+        return switch (ch) {
+            case '=' -> readTwoCharToken(TokenType.ASSIGN, TokenType.EQ, lineNumber, columnNumber, '=');
+            case '+' -> readSingleCharToken(TokenType.PLUS, lineNumber, columnNumber);
+            case '-' -> readTwoCharToken(TokenType.MINUS, TokenType.ARROW, lineNumber, columnNumber, '>');
+            case '*' -> readSingleCharToken(TokenType.ASTERISK, lineNumber, columnNumber);
+            case '/' -> readTwoCharToken(TokenType.SLASH, TokenType.NOT_EQ, lineNumber, columnNumber, '=');
+            case '^' -> readSingleCharToken(TokenType.CARET, lineNumber, columnNumber);
+            case '<' -> readTwoCharToken(TokenType.LT, TokenType.LTE, lineNumber, columnNumber, '=');
+            case '>' -> readTwoCharToken(TokenType.GT, TokenType.GTE, lineNumber, columnNumber, '=');
+            case '(' -> readSingleCharToken(TokenType.LPAREN, lineNumber, columnNumber);
+            case ')' -> readSingleCharToken(TokenType.RPAREN, lineNumber, columnNumber);
+            case ',' -> readSingleCharToken(TokenType.COMMA, lineNumber, columnNumber);
+            case '\"' -> readStringLiteralToken();
+            case '\n' -> readSingleCharToken(TokenType.NEWLINE, lineNumber, columnNumber);
+            case 0 -> new Token(TokenType.EOF, "", lineNumber, columnNumber);
             default -> {
                 if (isLetter()) {
                     String ident = readIdentifier();
                     TokenType type = TokenType.lookupIdent(ident);
-                    return new Token(type, ident, lineNumber, columnNumber);
+                    yield  new Token(type, ident, lineNumber, columnNumber);
                 }
                 if (isDigit()) {
                     String number = readNumber();
-                    return new Token(TokenType.NUMBER, number, lineNumber, columnNumber);
+                    yield  new Token(TokenType.NUMBER, number, lineNumber, columnNumber);
                 }
-                return new Token(TokenType.ILLEGAL, ch, lineNumber, columnNumber);
+                readChar();
+                yield new Token(TokenType.ILLEGAL, ch, lineNumber, columnNumber);
             }
-        }
-
-        readChar();
-
-        return token;
+        };
     }
 
     private void readChar() {
@@ -85,15 +81,23 @@ public class Lexer {
         return input.charAt(readPosition);
     }
 
+    private Token readSingleCharToken(TokenType type, int lineNumber, int columnNumber) {
+        char currentChar = ch;
+        readChar();
+        return new Token(type, currentChar, lineNumber, columnNumber);
+    }
+
     private Token readTwoCharToken(
             TokenType singleCharTokenType, TokenType twoCharTokenType, int lineNumber, int columnNumber, char nextChar
     ) {
+        char currentChar = ch;
         if (peekChar() == nextChar) {
-            char currentChar = ch;
             readChar();
-            return new Token(twoCharTokenType, String.valueOf(currentChar) + ch, lineNumber, columnNumber);
+            readChar();
+            return new Token(twoCharTokenType, String.valueOf(currentChar) + nextChar, lineNumber, columnNumber);
         } else {
-            return new Token(singleCharTokenType, ch, lineNumber, columnNumber);
+            readChar();
+            return new Token(singleCharTokenType, currentChar, lineNumber, columnNumber);
         }
     }
 
@@ -126,7 +130,7 @@ public class Lexer {
             readChar();
         }
 
-        if (peekChar() == 0) {
+        if (ch == 0) {
             return new Token(
                     TokenType.ILLEGAL,
                     input.subSequence(curPos, input.length()).toString(),
@@ -135,7 +139,10 @@ public class Lexer {
             );
         }
 
-        return new Token(TokenType.STRING, input.subSequence(strPos, position).toString(), lineNumber, columnNumber);
+        int pos = position;
+        readChar();
+
+        return new Token(TokenType.STRING, input.subSequence(strPos, pos).toString(), lineNumber, columnNumber);
     }
 
     private boolean isLetter() {

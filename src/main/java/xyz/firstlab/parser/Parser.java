@@ -54,6 +54,7 @@ public abstract class Parser {
         PrefixParselet prefix = prefixParseletMap.get(curToken.getType());
         if (prefix == null) {
             appendError(noPrefixParseletError(curToken));
+            nextToken();
             return null;
         }
         Expression leftExp = prefix.parse(this);

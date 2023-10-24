@@ -13,6 +13,7 @@ public class DefaultParser extends Parser {
         register(TokenType.NUMBER, new NumberParselet());
         register(TokenType.TRUE, new BooleanParselet());
         register(TokenType.FALSE, new BooleanParselet());
+        register(TokenType.STRING, new StringParselet());
         register(TokenType.IDENT, new IdentifierParselet());
         register(TokenType.PLUS, new PrefixOperatorParselet());
         register(TokenType.MINUS, new PrefixOperatorParselet());

@@ -42,7 +42,7 @@ class ParserTest {
                     false | false
                     """
     )
-    void booleanLiteralParsing(String input, boolean value) {
+    void booleanLiteralParsing(String input, boolean expected) {
         Lexer lexer = new Lexer(input);
         Parser parser = new DefaultParser(lexer);
         Program program = parser.parseProgram();
@@ -55,8 +55,33 @@ class ParserTest {
                         expressions.size())
                 .hasSize(1);
 
-        testBooleanLiteral(expressions.get(0), value);
+        testBooleanLiteral(expressions.get(0), expected);
     }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    "hello" | hello
+                    "hello, world!" | hello, world!
+                    """
+    )
+    void stringLiteralParsing(String input, String expected) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        testStringLiteral(expressions.get(0), expected);
+    }
+
 
     @ParameterizedTest
     @CsvSource({"foo", "bar"})
@@ -259,6 +284,17 @@ class ParserTest {
                 .isInstanceOf(BooleanLiteral.class);
 
         boolean value = ((BooleanLiteral) exp).getValue();
+        assertThat(value)
+                .withFailMessage("literal.value is wrong.\n expected: %s, got: %s", expected, value)
+                .isEqualTo(expected);
+    }
+
+    private static void testStringLiteral(Expression exp, String expected) {
+        assertThat(exp)
+                .withFailMessage("exp type is wrong.\n expected: StringLiteral, got: %s", exp.getClass())
+                .isInstanceOf(StringLiteral.class);
+
+        String value = ((StringLiteral) exp).getValue();
         assertThat(value)
                 .withFailMessage("literal.value is wrong.\n expected: %s, got: %s", expected, value)
                 .isEqualTo(expected);

@@ -1,9 +1,11 @@
 package xyz.firstlab.evaluator;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.NumberValue;
+import xyz.firstlab.evaluator.object.StringValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.parser.DefaultParser;
 import xyz.firstlab.parser.Parser;
@@ -75,9 +77,17 @@ class EvaluatorTest {
                     (1 > 2) == false | true
                     """
     )
-    void testBooleanExpression(String input, boolean expected) {
+    void evalBooleanExpression(String input, boolean expected) {
         Value value = testEval(input);
         testBooleanValue(expected, value);
+    }
+
+    @Test
+    void evalStringExpression() {
+        String input = "\"hello, \" + \"world!\"";
+        String expected = "hello, world!";
+        Value value = testEval(input);
+        testStringValue(expected, value);
     }
 
     Value testEval(String input) {
@@ -100,13 +110,24 @@ class EvaluatorTest {
 
     private static void testBooleanValue(boolean expected, Value value) {
         assertThat(value)
-                .withFailMessage("value type is wrong. expected: NumberValue, got: %s", value.getClass())
+                .withFailMessage("value type is wrong. expected: BooleanValue, got: %s", value.getClass())
                 .isInstanceOf(BooleanValue.class);
 
         BooleanValue booleanValue = (BooleanValue) value;
         assertThat(booleanValue.getValue())
                 .withFailMessage(
                         "booleanValue.value is wrong. expected: %s, got: %s", expected, booleanValue.getValue())
+                .isEqualTo(expected);
+    }
+
+    private static void testStringValue(String expected, Value value) {
+        assertThat(value)
+                .withFailMessage("value type is wrong. expected: StringValue, got: %s", value.getClass())
+                .isInstanceOf(StringValue.class);
+
+        StringValue stringValue = (StringValue) value;
+        assertThat(stringValue.getValue())
+                .withFailMessage("stringValue.value is wrong. expected: %s, got: %s", expected, stringValue.getValue())
                 .isEqualTo(expected);
     }
 

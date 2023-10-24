@@ -54,7 +54,7 @@ public class PrefixExpression extends Expression {
                 throw new UnsupportedOperationException("Not implemented.");
             }
             default -> {
-                String message = String.format("Unknown operator: %s", string());
+                String message = String.format("Unknown operator: %s %s", operator, evaluated.type());
                 throw new EvaluatingErrorException(token(), message);
             }
         };

@@ -2,10 +2,7 @@ package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
-import xyz.firstlab.evaluator.object.BooleanValue;
-import xyz.firstlab.evaluator.object.NumberValue;
-import xyz.firstlab.evaluator.object.Value;
-import xyz.firstlab.evaluator.object.ValueType;
+import xyz.firstlab.evaluator.object.*;
 import xyz.firstlab.token.Token;
 
 import java.math.BigDecimal;
@@ -56,6 +53,10 @@ public class InfixExpression extends Expression {
             return evaluateBooleanValue(leftValue, rightValue);
         }
 
+        if (leftValue.type() == ValueType.STRING && rightValue.type() == ValueType.STRING) {
+            return evaluateStringValue(leftValue, rightValue);
+        }
+
         throw new UnsupportedOperationException("Not implemented.");
     }
 
@@ -80,7 +81,7 @@ public class InfixExpression extends Expression {
             case ">" -> new BooleanValue(leftValue.compareTo(rightValue) > 0);
             case ">=" -> new BooleanValue(leftValue.compareTo(rightValue) >= 0);
             default -> {
-                String message = String.format("Unknown operator: %s", string());
+                String message = String.format("Unknown operator: %s %s %s", left.type(), operator, right.type());
                 throw new EvaluatingErrorException(token(), message);
             }
         };
@@ -94,10 +95,22 @@ public class InfixExpression extends Expression {
             case "==" -> new BooleanValue(leftValue == rightValue);
             case "/=" -> new BooleanValue(leftValue != rightValue);
             default -> {
-                String message = String.format("Unknown operator: %s", string());
+                String message = String.format("Unknown operator: %s %s %s", left.type(), operator, right.type());
                 throw new EvaluatingErrorException(token(), message);
             }
         };
+    }
+
+    private Value evaluateStringValue(Value left, Value right) {
+        String leftValue = ((StringValue) left).getValue();
+        String rightValue = ((StringValue) right).getValue();
+
+        if (operator.equals("+")) {
+            return new StringValue(leftValue + rightValue);
+        }
+
+        String message = String.format("Unknown operator: %s %s %s", left.type(), operator, right.type());
+        throw new EvaluatingErrorException(token(), message);
     }
 
 }

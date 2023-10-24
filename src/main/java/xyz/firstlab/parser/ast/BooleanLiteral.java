@@ -1,6 +1,7 @@
 package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
@@ -24,7 +25,7 @@ public class BooleanLiteral extends Expression {
 
     @Override
     public Value evaluate(Environment env) {
-        throw new UnsupportedOperationException("Not implemented.");
+        return new BooleanValue(value);
     }
 
 }

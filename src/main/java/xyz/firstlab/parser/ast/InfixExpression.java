@@ -2,6 +2,7 @@ package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
+import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.NumberValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.evaluator.object.ValueType;
@@ -52,7 +53,7 @@ public class InfixExpression extends Expression {
         }
 
         if (leftValue.type() == ValueType.BOOLEAN && rightValue.type() == ValueType.BOOLEAN) {
-            throw new UnsupportedOperationException("Not implemented.");
+            return evaluateBooleanValue(leftValue, rightValue);
         }
 
         throw new UnsupportedOperationException("Not implemented.");
@@ -72,6 +73,26 @@ public class InfixExpression extends Expression {
                 double rightDouble = rightValue.doubleValue();
                 yield new NumberValue(BigDecimal.valueOf(Math.pow(leftDouble, rightDouble)));
             }
+            case "==" -> new BooleanValue(leftValue.compareTo(rightValue) == 0);
+            case "/=" -> new BooleanValue(leftValue.compareTo(rightValue) != 0);
+            case "<" -> new BooleanValue(leftValue.compareTo(rightValue) < 0);
+            case "<=" -> new BooleanValue(leftValue.compareTo(rightValue) <= 0);
+            case ">" -> new BooleanValue(leftValue.compareTo(rightValue) > 0);
+            case ">=" -> new BooleanValue(leftValue.compareTo(rightValue) >= 0);
+            default -> {
+                String message = String.format("Unknown operator: %s", string());
+                throw new EvaluatingErrorException(token(), message);
+            }
+        };
+    }
+
+    private Value evaluateBooleanValue(Value left, Value right) {
+        boolean leftValue = ((BooleanValue) left).getValue();
+        boolean rightValue = ((BooleanValue) right).getValue();
+
+        return switch (operator) {
+            case "==" -> new BooleanValue(leftValue == rightValue);
+            case "/=" -> new BooleanValue(leftValue != rightValue);
             default -> {
                 String message = String.format("Unknown operator: %s", string());
                 throw new EvaluatingErrorException(token(), message);

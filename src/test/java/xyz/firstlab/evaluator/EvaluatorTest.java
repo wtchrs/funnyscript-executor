@@ -2,6 +2,7 @@ package xyz.firstlab.evaluator;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.NumberValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.parser.DefaultParser;
@@ -45,6 +46,40 @@ class EvaluatorTest {
         testNumberValue(expected, value);
     }
 
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    true | true
+                    false | false
+                    1 < 2 | true
+                    1 > 2 | false
+                    1 < 1 | false
+                    1 > 1 | false
+                    1 <= 2 | true
+                    1 >= 2 | false
+                    1 <= 1 | true
+                    1 >= 1 | true
+                    1 == 1 | true
+                    1 /= 1 | false
+                    1 == 2 | false
+                    1 /= 2 | true
+                    true == true | true
+                    false == false | true
+                    true == false | false
+                    true /= false | true
+                    false /= true | true
+                    (1 < 2) == true | true
+                    (1 < 2) == false | false
+                    (1 > 2) == true | false
+                    (1 > 2) == false | true
+                    """
+    )
+    void testBooleanExpression(String input, boolean expected) {
+        Value value = testEval(input);
+        testBooleanValue(expected, value);
+    }
+
     Value testEval(String input) {
         Lexer lexer = new Lexer(input);
         Parser parser = new DefaultParser(lexer);
@@ -61,6 +96,18 @@ class EvaluatorTest {
         assertThat(numberValue.getValue().compareTo(new BigDecimal(expected)))
                 .withFailMessage("numberValue.value is wrong. expected: %s, got: %s", expected, numberValue.getValue())
                 .isEqualTo(0);
+    }
+
+    private static void testBooleanValue(boolean expected, Value value) {
+        assertThat(value)
+                .withFailMessage("value type is wrong. expected: NumberValue, got: %s", value.getClass())
+                .isInstanceOf(BooleanValue.class);
+
+        BooleanValue booleanValue = (BooleanValue) value;
+        assertThat(booleanValue.getValue())
+                .withFailMessage(
+                        "booleanValue.value is wrong. expected: %s, got: %s", expected, booleanValue.getValue())
+                .isEqualTo(expected);
     }
 
 }

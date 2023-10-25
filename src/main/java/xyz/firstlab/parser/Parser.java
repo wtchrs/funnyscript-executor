@@ -33,7 +33,13 @@ public abstract class Parser {
         Program program = new Program();
 
         while (!curTokenIs(TokenType.EOF)) {
-            Expression exp = parseExpression(Precedence.LOWEST);
+            Expression exp = null;
+
+            try {
+                exp = parseExpression(Precedence.LOWEST);
+            } catch (ParsingErrorException e) {
+                appendError(new ParsingError(e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+            }
 
             if (exp != null) {
                 program.append(exp);
@@ -75,7 +81,7 @@ public abstract class Parser {
         return Collections.unmodifiableList(errors);
     }
 
-    public void appendError(ParsingError error) {
+    private void appendError(ParsingError error) {
         errors.add(error);
     }
 
@@ -95,13 +101,17 @@ public abstract class Parser {
         return peekToken.getType().equals(type);
     }
 
-    public boolean expectPeek(TokenType tokenType) {
+    public void assertPeekIs(TokenType tokenType) {
         if (peekTokenIs(tokenType)) {
             nextToken();
-            return true;
+            return;
         }
-        appendError(notExpectedTokenError(tokenType, peekToken));
-        return false;
+
+        String message = String.format(
+                "Expected '%s', but got '%s' instead.",
+                tokenType.getValue(), peekToken.getType().getValue()
+        );
+        throw new ParsingErrorException(peekToken, message);
     }
 
     public void nextToken() {
@@ -136,14 +146,6 @@ public abstract class Parser {
                 token.getLineNumber(),
                 token.getColumnNumber(),
                 String.format("No prefix parse function for '%s' found.", token.getType().getValue())
-        );
-    }
-
-    private ParsingError notExpectedTokenError(TokenType expected, Token token) {
-        return new ParsingError(
-                token.getLineNumber(),
-                token.getColumnNumber(),
-                String.format("Expected '%s', but got '%s' instead.", expected.getValue(), token.getType().getValue())
         );
     }
 

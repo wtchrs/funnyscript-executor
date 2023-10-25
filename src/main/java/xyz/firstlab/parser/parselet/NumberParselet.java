@@ -1,7 +1,7 @@
 package xyz.firstlab.parser.parselet;
 
 import xyz.firstlab.parser.Parser;
-import xyz.firstlab.parser.ParsingError;
+import xyz.firstlab.parser.ParsingErrorException;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.NumberLiteral;
 import xyz.firstlab.token.Token;
@@ -14,17 +14,10 @@ public class NumberParselet implements PrefixParselet {
         try {
             return new NumberLiteral(curToken, curToken.getLiteral());
         } catch (NumberFormatException e) {
-            parser.appendError(wrongNumberFormatError(curToken));
-            return null;
+            throw new ParsingErrorException(
+                    curToken, String.format("Could not parse `%s` as Number.", curToken.getLiteral())
+            );
         }
-    }
-
-    private ParsingError wrongNumberFormatError(Token token) {
-        return new ParsingError(
-                token.getLineNumber(),
-                token.getColumnNumber(),
-                String.format("Could not parse `%s` as Number.", token.getLiteral())
-        );
     }
 
 }

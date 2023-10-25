@@ -28,9 +28,7 @@ public class FunctionParselet implements InfixParselet {
             }
         }
 
-        if (!parser.expectPeek(TokenType.RPAREN)) {
-            return null;
-        }
+        parser.assertPeekIs(TokenType.RPAREN);
 
         return new FunctionExpression(curToken, left, params);
     }

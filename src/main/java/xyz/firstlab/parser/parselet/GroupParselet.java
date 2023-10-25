@@ -11,9 +11,7 @@ public class GroupParselet implements PrefixParselet {
     public Expression parse(Parser parser) {
         parser.nextToken();
         Expression exp = parser.parseExpression(Precedence.LOWEST);
-        if (!parser.expectPeek(TokenType.RPAREN)) {
-            return null;
-        }
+        parser.assertPeekIs(TokenType.RPAREN);
         return exp;
     }
 

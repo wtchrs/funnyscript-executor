@@ -30,10 +30,7 @@ public class CaseExpressionParselet implements PrefixParselet {
                 cond = parser.parseExpression(Precedence.LOWEST);
             }
 
-            if (!parser.expectPeek(TokenType.ARROW)) {
-                return null;
-            }
-
+            parser.assertPeekIs(TokenType.ARROW);
             parser.nextToken();
 
             Expression exp = parser.parseExpression(Precedence.LOWEST);

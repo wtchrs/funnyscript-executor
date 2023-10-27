@@ -33,7 +33,9 @@ public class FunctionAssignExpression extends Expression {
 
     @Override
     public Value evaluate(Environment env) {
-        throw new UnsupportedOperationException("Not implemented.");
+        FunctionValue function = new FunctionValue(parameters, right, env);
+        env.set(functionIdent.string(), function);
+        return env.get(functionIdent.string());
     }
 
     private static List<Identifier> paramsToIdents(List<Expression> params) {

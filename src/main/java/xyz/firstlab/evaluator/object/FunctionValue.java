@@ -1,5 +1,6 @@
 package xyz.firstlab.evaluator.object;
 
+import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.Identifier;
 
@@ -12,9 +13,12 @@ public class FunctionValue implements Value {
 
     private final Expression body;
 
-    public FunctionValue(List<Identifier> parameters, Expression body) {
+    private final Environment env;
+
+    public FunctionValue(List<Identifier> parameters, Expression body, Environment env) {
         this.parameters = parameters;
         this.body = body;
+        this.env = env;
     }
 
     @Override

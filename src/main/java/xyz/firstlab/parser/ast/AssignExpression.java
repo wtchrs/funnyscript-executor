@@ -23,6 +23,12 @@ public class AssignExpression extends Expression {
 
     @Override
     public Value evaluate(Environment env) {
-        throw new UnsupportedOperationException("Not implemented.");
+        if (left instanceof Identifier) {
+            env.set(left.string(), right.evaluate(env));
+            return env.get(left.string());
+        }
+
+        String message = String.format("%s is not assignable.", left.string());
+        throw new EvaluatingErrorException(token(), message);
     }
 }

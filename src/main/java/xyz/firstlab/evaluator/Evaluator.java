@@ -8,6 +8,10 @@ public abstract class Evaluator {
 
     public static Value evaluate(Node node) {
         Environment env = Environment.create();
+        return evaluate(node, env);
+    }
+
+    public static Value evaluate(Node node, Environment env) {
         try {
             return node.evaluate(env);
         } catch (EvaluatingErrorException e) {

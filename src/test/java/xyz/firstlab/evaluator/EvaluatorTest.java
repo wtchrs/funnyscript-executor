@@ -3,10 +3,7 @@ package xyz.firstlab.evaluator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import xyz.firstlab.evaluator.object.BooleanValue;
-import xyz.firstlab.evaluator.object.NumberValue;
-import xyz.firstlab.evaluator.object.StringValue;
-import xyz.firstlab.evaluator.object.Value;
+import xyz.firstlab.evaluator.object.*;
 import xyz.firstlab.parser.DefaultParser;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ast.Program;
@@ -45,7 +42,7 @@ class EvaluatorTest {
     )
     void evalNumberExpression(String input, String expected) {
         Value value = testEval(input);
-        testNumberValue(expected, value);
+        testNumberValue(value, expected);
     }
 
     @ParameterizedTest
@@ -79,7 +76,7 @@ class EvaluatorTest {
     )
     void evalBooleanExpression(String input, boolean expected) {
         Value value = testEval(input);
-        testBooleanValue(expected, value);
+        testBooleanValue(value, expected);
     }
 
     @Test
@@ -87,7 +84,45 @@ class EvaluatorTest {
         String input = "\"hello, \" + \"world!\"";
         String expected = "hello, world!";
         Value value = testEval(input);
-        testStringValue(expected, value);
+        testStringValue(value, expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    x = 10 | x | 10
+                    x = 10 + 5 | x | 15
+                    """
+    )
+    void evalAssignExpression(String input, String variableName, String expected) {
+        Environment env = Environment.create();
+        Value value = testEval(input, env);
+
+        assertThat(value.inspect())
+                .withFailMessage("value is wrong. expected: %s, got: %s", expected, value.inspect())
+                .isEqualTo(expected);
+
+        String envValue = env.get(variableName).inspect();
+        assertThat(envValue)
+                .withFailMessage(
+                        "Variable '%s' has wrong value. expected: %s, got: %s", variableName, expected, envValue)
+                .isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    f(x) = x + 10 | f | x | (x + 10)
+                    add(a, b) = a + b | add | a, b | (a + b)
+                    abs(x) = case x < 0 -> -x, default -> x | abs | x | (case ((x < 0) -> (-x)), (true -> x))
+                    """
+    )
+    void evalFunctionAssignExpression(String input, String functionName, String parameters, String body) {
+        Environment env = Environment.create();
+        Value value = testEval(input, env);
+        testFunctionValue(value, parameters, body);
     }
 
     Value testEval(String input) {
@@ -97,7 +132,14 @@ class EvaluatorTest {
         return Evaluator.evaluate(program);
     }
 
-    private static void testNumberValue(String expected, Value value) {
+    Value testEval(String input, Environment env) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        return Evaluator.evaluate(program, env);
+    }
+
+    private static void testNumberValue(Value value, String expected) {
         assertThat(value)
                 .withFailMessage("value type is wrong. expected: NumberValue, got: %s", value.getClass())
                 .isInstanceOf(NumberValue.class);
@@ -108,7 +150,7 @@ class EvaluatorTest {
                 .isEqualTo(0);
     }
 
-    private static void testBooleanValue(boolean expected, Value value) {
+    private static void testBooleanValue(Value value, boolean expected) {
         assertThat(value)
                 .withFailMessage("value type is wrong. expected: BooleanValue, got: %s", value.getClass())
                 .isInstanceOf(BooleanValue.class);
@@ -120,7 +162,7 @@ class EvaluatorTest {
                 .isEqualTo(expected);
     }
 
-    private static void testStringValue(String expected, Value value) {
+    private static void testStringValue(Value value, String expected) {
         assertThat(value)
                 .withFailMessage("value type is wrong. expected: StringValue, got: %s", value.getClass())
                 .isInstanceOf(StringValue.class);
@@ -129,6 +171,20 @@ class EvaluatorTest {
         assertThat(stringValue.getValue())
                 .withFailMessage("stringValue.value is wrong. expected: %s, got: %s", expected, stringValue.getValue())
                 .isEqualTo(expected);
+    }
+
+    private void testFunctionValue(Value value, String parameters, String body) {
+        assertThat(value)
+                .withFailMessage("value type is wrong. expected: FunctionValue, got: %s", value.getClass())
+                .isInstanceOf(FunctionValue.class);
+
+        FunctionValue functionValue = (FunctionValue) value;
+        String expectedInspection = String.format("<FUNCTION(%s) = %s>", parameters, body);
+        assertThat(functionValue.inspect())
+                .withFailMessage(
+                        "functionValue.value is wrong. expected: %s, got: %s",
+                        expectedInspection, functionValue.inspect())
+                .isEqualTo(expectedInspection);
     }
 
 }

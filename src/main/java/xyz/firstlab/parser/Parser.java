@@ -38,7 +38,8 @@ public abstract class Parser {
             try {
                 exp = parseExpression(Precedence.LOWEST);
             } catch (ParsingErrorException e) {
-                appendError(new ParsingError(e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+                ParsingError error = new ParsingError(e.getLineNumber(), e.getColumnNumber(), e.getMessage());
+                errors.add(error);
             }
 
             if (exp != null) {
@@ -59,9 +60,11 @@ public abstract class Parser {
     public Expression parseExpression(int precedence) {
         PrefixParselet prefix = prefixParseletMap.get(curToken.getType());
         if (prefix == null) {
-            appendError(noPrefixParseletError(curToken));
+            Token curToken = getCurToken();
             nextToken();
-            return null;
+            String message =
+                    String.format("No prefix or infix parselet for '%s' found.", curToken.getType().getValue());
+            throw new ParsingErrorException(curToken, message);
         }
         Expression leftExp = prefix.parse(this);
 
@@ -79,10 +82,6 @@ public abstract class Parser {
 
     public List<ParsingError> getErrors() {
         return Collections.unmodifiableList(errors);
-    }
-
-    private void appendError(ParsingError error) {
-        errors.add(error);
     }
 
     public Token getCurToken() {
@@ -139,14 +138,6 @@ public abstract class Parser {
             return infixParseletMap.get(peekToken.getType()).getPrecedence();
         }
         return Precedence.LOWEST;
-    }
-
-    private ParsingError noPrefixParseletError(Token token) {
-        return new ParsingError(
-                token.getLineNumber(),
-                token.getColumnNumber(),
-                String.format("No prefix parse function for '%s' found.", token.getType().getValue())
-        );
     }
 
 }

@@ -3,21 +3,27 @@ package xyz.firstlab.parser;
 public enum Precedence {
 
     LOWEST(0),
-    ASSIGN(1),
-    EQUALS(2),
-    LESS_GREATER(3),
-    SUM(4),
-    PRODUCT(5),
-    EXPONENT(6),
-    PREFIX(7),
-    FUNCTION(8),
-    INDEX(9),
+    ASSIGN(LOWEST),
+    OR(ASSIGN),
+    AND(OR),
+    EQUALS(AND),
+    LESS_GREATER(EQUALS),
+    SUM(LESS_GREATER),
+    PRODUCT(SUM),
+    EXPONENT(PRODUCT),
+    PREFIX(EXPONENT),
+    FUNCTION(PREFIX),
+//    INDEX(FUNCTION),
     ;
 
     private final int value;
 
     Precedence(int value) {
         this.value = value;
+    }
+
+    Precedence(Precedence prev) {
+        this.value = prev.value + 1;
     }
 
     public int getValue() {

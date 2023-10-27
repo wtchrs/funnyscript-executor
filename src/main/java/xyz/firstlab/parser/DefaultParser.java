@@ -26,6 +26,8 @@ public class DefaultParser extends Parser {
         register(TokenType.LPAREN, new FunctionParselet());
         infixLeft(TokenType.EQ, Precedence.EQUALS);
         infixLeft(TokenType.NOT_EQ, Precedence.EQUALS);
+        infixLeft(TokenType.OR, Precedence.OR);
+        infixLeft(TokenType.AND, Precedence.AND);
         infixLeft(TokenType.LT, Precedence.LESS_GREATER);
         infixLeft(TokenType.LTE, Precedence.LESS_GREATER);
         infixLeft(TokenType.GT, Precedence.LESS_GREATER);

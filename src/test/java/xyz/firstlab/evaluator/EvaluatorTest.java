@@ -68,10 +68,14 @@ class EvaluatorTest {
                     true == false | false
                     true /= false | true
                     false /= true | true
-                    (1 < 2) == true | true
-                    (1 < 2) == false | false
-                    (1 > 2) == true | false
-                    (1 > 2) == false | true
+                    1 < 2 == true | true
+                    1 < 2 == false | false
+                    1 > 2 == true | false
+                    1 > 2 == false | true
+                    1 < 2 and 5 /= 3 | true
+                    1 < 2 and 5 < 3 | false
+                    1 > 2 or 5 < 3 | false
+                    1 > 2 or 5 /= 3 | true
                     """
     )
     void evalBooleanExpression(String input, boolean expected) {

@@ -220,6 +220,32 @@ class ParserTest {
     @CsvSource(
             delimiter = '|',
             textBlock = """
+                    true and true | and | true | true
+                    true and false | and | true | false
+                    true or false | or | true | false
+                    false or false | or | false | false
+                    """
+    )
+    void booleanInfixExpressionParsing(String input, String operator, Boolean left, Boolean right) {
+        Lexer lexer = new Lexer(input);
+        Parser parser = new DefaultParser(lexer);
+        Program program = parser.parseProgram();
+        checkParserErrors(parser);
+
+        List<Expression> expressions = program.getExpressions();
+        assertThat(expressions)
+                .withFailMessage(
+                        "program.expressions has the wrong number of elements.\n expected: 1, got: %d",
+                        expressions.size())
+                .hasSize(1);
+
+        testInfixExpression(expressions.get(0), operator, left, right);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
                     -a * b | ((-a) * b)
                     a + b + c | ((a + b) + c)
                     a + b - c | ((a + b) - c)
@@ -233,6 +259,9 @@ class ParserTest {
                     3 > 5 == false | ((3 > 5) == false)
                     3 < 5 == true | ((3 < 5) == true)
                     true == 3 < 5 | (true == (3 < 5))
+                    3 < x and x < 5 | ((3 < x) and (x < 5))
+                    x < 3 or x > 5 | ((x < 3) or (x > 5))
+                    x < y + 3 or x > y + 5 | ((x < (y + 3)) or (x > (y + 5)))
                     1 + (2 + 3) + 4 | ((1 + (2 + 3)) + 4)
                     (5 + 5) * 2 | ((5 + 5) * 2)
                     2 / ( 5 + 5) | (2 / (5 + 5))

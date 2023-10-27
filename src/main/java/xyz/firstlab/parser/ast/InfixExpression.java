@@ -57,7 +57,8 @@ public class InfixExpression extends Expression {
             return evaluateStringValue(leftValue, rightValue);
         }
 
-        throw new UnsupportedOperationException("Not implemented.");
+        String message = String.format("Unknown operator: %s %s %s", leftValue.type(), operator, rightValue.type());
+        throw new EvaluatingErrorException(token(), message);
     }
 
     private Value evaluateNumberValue(Value left, Value right) {
@@ -94,6 +95,8 @@ public class InfixExpression extends Expression {
         return switch (operator) {
             case "==" -> new BooleanValue(leftValue == rightValue);
             case "/=" -> new BooleanValue(leftValue != rightValue);
+            case "and" -> new BooleanValue(leftValue && rightValue);
+            case "or" -> new BooleanValue(leftValue || rightValue);
             default -> {
                 String message = String.format("Unknown operator: %s %s %s", left.type(), operator, right.type());
                 throw new EvaluatingErrorException(token(), message);

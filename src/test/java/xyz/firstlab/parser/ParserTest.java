@@ -127,10 +127,15 @@ class ParserTest {
         testPrefixExpression(expressions.get(0), operator, value);
     }
 
-    @Test
-    void assignExpressionParsing() {
-        String input = "x = 10";
-
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    x = 10 | x | 10
+                    add(x, y) = x + y | add(x, y) | (x + y)
+                    """
+    )
+    void assignExpressionParsing(String input, String leftExpected, String rightExpected) {
         Lexer lexer = new Lexer(input);
         Parser parser = new DefaultParser(lexer);
         Program program = parser.parseProgram();
@@ -143,7 +148,14 @@ class ParserTest {
                         expressions.size())
                 .hasSize(1);
 
-        testInfixExpression(expressions.get(0), "=", "x", new BigDecimal("10"));
+        Expression exp = expressions.get(0);
+        assertThat(exp)
+                .withFailMessage(
+                        "exp type is wrong.\n expected: AssignExpression or FunctionAssignExpression, got: %s",
+                        exp.getClass())
+                .isInstanceOfAny(AssignExpression.class, FunctionAssignExpression.class);
+
+        assertThat(exp.string()).isEqualTo(String.format("(%s = %s)", leftExpected, rightExpected));
     }
 
     @ParameterizedTest
@@ -351,7 +363,7 @@ class ParserTest {
             testBooleanLiteral(value, expected);
         } else if (expectedValue instanceof String expected) {
             testIdentifier(value, expected);
-        }else {
+        } else {
             fail("type of expectedValue is not handled.\n got: %s", expectedValue.getClass());
         }
     }

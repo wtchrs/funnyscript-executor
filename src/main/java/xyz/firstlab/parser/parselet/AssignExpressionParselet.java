@@ -3,8 +3,7 @@ package xyz.firstlab.parser.parselet;
 import xyz.firstlab.parser.AssignExpressionUtils;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.InfixExpression;
+import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.token.Token;
 
 public class AssignExpressionParselet implements InfixParselet {
@@ -18,7 +17,11 @@ public class AssignExpressionParselet implements InfixParselet {
         parser.nextToken();
         Expression right = parser.parseExpression(getPrecedence().getValue() - 1);
 
-        return new InfixExpression(curToken, curToken.getLiteral(), left, right);
+        if (left instanceof FunctionExpression funcExp) {
+            return new FunctionAssignExpression(curToken, funcExp, right);
+        }
+
+        return new AssignExpression(curToken, left, right);
     }
 
     @Override

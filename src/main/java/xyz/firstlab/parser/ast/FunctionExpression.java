@@ -4,33 +4,34 @@ import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FunctionExpression extends Expression {
 
-    private final Expression function;
+    private final Expression functionIdent;
 
     private final List<Expression> arguments;
 
-    public FunctionExpression(Token token, Expression function, List<Expression> arguments) {
+    public FunctionExpression(Token token, Expression functionIdent, List<Expression> arguments) {
         super(token);
-        this.function = function;
+        this.functionIdent = functionIdent;
         this.arguments = arguments;
     }
 
-    public Expression getFunction() {
-        return function;
+    public Expression getFunctionIdent() {
+        return functionIdent;
     }
 
     public List<Expression> getArguments() {
-        return arguments;
+        return Collections.unmodifiableList(arguments);
     }
 
     @Override
     public String string() {
         List<String> argumentStrings = arguments.stream().map(Expression::string).toList();
         String joinedString = String.join(", ", argumentStrings);
-        return String.format("%s(%s)", function.string(), joinedString);
+        return String.format("%s(%s)", functionIdent.string(), joinedString);
     }
 
     @Override

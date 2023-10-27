@@ -1,6 +1,7 @@
 package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.evaluator.Environment;
+import xyz.firstlab.evaluator.EvaluatingErrorException;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.token.Token;
 
@@ -24,7 +25,14 @@ public class Identifier extends Expression {
 
     @Override
     public Value evaluate(Environment env) {
-        throw new UnsupportedOperationException("Not implemented.");
+        Value value = env.get(this.value);
+
+        if (value == null) {
+            String message = String.format("Not exist variable: '%s'", this.value);
+            throw new EvaluatingErrorException(token(), message);
+        }
+
+        return value;
     }
 
 }

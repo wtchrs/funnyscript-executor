@@ -111,6 +111,20 @@ class EvaluatorTest {
     @CsvSource(
             delimiter = '|',
             textBlock = """
+                    case 1 < 2 -> 10, default -> 5 | 10
+                    case 1 > 2 -> 10, default -> 5 | 5
+                    case false -> 10, true == false -> 5, default -> 1 | 1
+                    """
+    )
+    void evalCaseExpression(String input, String expected) {
+        Value value = testEval(input);
+        testNumberValue(value, expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
                     f(x) = x + 10 | f | x | (x + 10)
                     add(a, b) = a + b | add | a, b | (a + b)
                     abs(x) = case x < 0 -> -x, default -> x | abs | x | (case ((x < 0) -> (-x)), (true -> x))

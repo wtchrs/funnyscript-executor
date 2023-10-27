@@ -1,7 +1,5 @@
 package xyz.firstlab.lexer;
 
-import xyz.firstlab.StringEscapeUtils;
-
 import java.util.Objects;
 
 public class Token {

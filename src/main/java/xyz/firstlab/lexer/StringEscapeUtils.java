@@ -1,10 +1,6 @@
-package xyz.firstlab;
+package xyz.firstlab.lexer;
 
-public final class StringEscapeUtils {
-
-    private StringEscapeUtils() {
-        throw new UnsupportedOperationException("StringEscapeUtils: Constructor calls are prohibited.");
-    }
+public abstract class StringEscapeUtils {
 
     public static String escapeString(String input) {
         StringBuilder sb = new StringBuilder();

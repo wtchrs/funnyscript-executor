@@ -38,7 +38,6 @@ public class Lexer {
             case ')' -> readSingleCharToken(TokenType.RPAREN, lineNumber, columnNumber);
             case ',' -> readSingleCharToken(TokenType.COMMA, lineNumber, columnNumber);
             case '\"' -> readStringLiteralToken();
-            case '\n' -> readSingleCharToken(TokenType.NEWLINE, lineNumber, columnNumber);
             case 0 -> new Token(TokenType.EOF, "", lineNumber, columnNumber);
             default -> {
                 if (isLetter()) {
@@ -154,7 +153,7 @@ public class Lexer {
     }
 
     private void skipWhitespace() {
-        while (ch == ' ' || ch == '\t' || ch == '\r') {
+        while (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
             readChar();
         }
     }

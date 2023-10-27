@@ -68,7 +68,7 @@ public abstract class Parser {
         }
         Expression leftExp = prefix.parse(this);
 
-        while (!peekTokenIs(TokenType.NEWLINE) && precedence < peekPrecedence().getValue()) {
+        while (precedence < peekPrecedence().getValue()) {
             InfixParselet infix = infixParseletMap.get(peekToken.getType());
             if (infix == null) {
                 return leftExp;

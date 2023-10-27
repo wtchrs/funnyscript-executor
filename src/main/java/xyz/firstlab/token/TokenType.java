@@ -6,7 +6,6 @@ public enum TokenType {
 
     ILLEGAL("<ILLEGAL>"),
     EOF("<EOF>"),
-    NEWLINE("\\n"),
     IDENT("<IDENT>"),
     NUMBER("<NUMBER>"),
     STRING("<STRING>"),

@@ -21,6 +21,18 @@ public class FunctionValue implements Value {
         this.env = env;
     }
 
+    public List<Identifier> getParameters() {
+        return parameters;
+    }
+
+    public Expression getBody() {
+        return body;
+    }
+
+    public Environment getEnclosedEnv() {
+        return env.enclosed();
+    }
+
     @Override
     public ValueType type() {
         return ValueType.FUNCTION;

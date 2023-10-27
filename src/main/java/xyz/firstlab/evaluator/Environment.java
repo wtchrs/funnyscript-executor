@@ -19,8 +19,8 @@ public class Environment {
         return new Environment(null);
     }
 
-    public static Environment createEnclosed(Environment outer) {
-        return new Environment(outer);
+    public Environment enclosed() {
+        return new Environment(this);
     }
 
     public Value get(String name) {

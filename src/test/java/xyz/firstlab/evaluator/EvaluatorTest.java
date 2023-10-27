@@ -138,6 +138,59 @@ class EvaluatorTest {
         testFunctionValue(env.get(functionName), parameters, body);
     }
 
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    id(x) = x id(5) | 5
+                    double(x) = 2 * x double(5) | 10
+                    add(x, y) = x + y add(5, 5) | 10
+                    add(x, y) = x + y add(5 + 5, add(5, 5)) | 20
+                    (id(x) = x)(5) | 5
+                    y = 10 x = 5 f(x) = y + x f(3) | 13
+                    x = 10 f() = x f() | 10
+                    """
+    )
+    void evalFunctionCallExpression(String input, String expected) {
+        Value value = testEval(input);
+        testNumberValue(value, expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    sum(a, b) = a + b sum(5) | b | (a + b) | a | 5
+                    f(a, b, c) = a * b + c f(2) | b, c | ((a * b) + c) | a | 2
+                    f(a, b, c) = a * b + c f(2, 4) | c | ((a * b) + c) | a, b | 2, 4
+                    """
+    )
+    void evalFunctionCurrying(
+            String input, String params, String body, String capturedVarNames, String capturedValues) {
+        Environment env = Environment.create();
+        Value value = testEval(input, env);
+
+        testFunctionValue(value, params, body);
+
+        FunctionValue func = (FunctionValue) value;
+        Environment funcEnv = func.getEnclosedEnv();
+        String[] varNames = capturedVarNames.split(", ");
+        String[] values = capturedValues.split(", ");
+
+        testEnvVariables(varNames, funcEnv, values);
+    }
+
+    private static void testEnvVariables(String[] varNames, Environment funcEnv, String[] values) {
+        for (int i = 0; i < varNames.length; i++) {
+            Value val = funcEnv.get(varNames[i]);
+            assertThat(val.inspect())
+                    .withFailMessage(
+                            "[%d] Captured variable '%s' is wrong. expected: %s, got: %s",
+                            i, varNames[i], values[i], val)
+                    .isEqualTo(values[i]);
+        }
+    }
+
     Value testEval(String input) {
         Lexer lexer = new Lexer(input);
         Parser parser = new DefaultParser(lexer);

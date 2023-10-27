@@ -15,7 +15,7 @@ public abstract class AssignExpressionUtils {
     }
 
     private static void assertFunctionExpressionAssignable(FunctionExpression funcExp) {
-        Expression function = funcExp.getFunctionIdent();
+        Expression function = funcExp.getFunction();
         if (!(function instanceof Identifier)) {
             throw new ParsingErrorException(function.token(), "Not an Identifier.");
         }

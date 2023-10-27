@@ -20,7 +20,7 @@ public class FunctionAssignExpression extends Expression {
 
     public FunctionAssignExpression(Token token, FunctionExpression left, Expression right) {
         super(token);
-        this.functionIdent = left.getFunctionIdent();
+        this.functionIdent = left.getFunction();
         this.parameters = paramsToIdents(left.getArguments());
         this.right = right;
     }

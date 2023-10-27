@@ -103,15 +103,8 @@ class EvaluatorTest {
         Environment env = Environment.create();
         Value value = testEval(input, env);
 
-        assertThat(value.inspect())
-                .withFailMessage("value is wrong. expected: %s, got: %s", expected, value.inspect())
-                .isEqualTo(expected);
-
-        String envValue = env.get(variableName).inspect();
-        assertThat(envValue)
-                .withFailMessage(
-                        "Variable '%s' has wrong value. expected: %s, got: %s", variableName, expected, envValue)
-                .isEqualTo(expected);
+        testNumberValue(value, expected);
+        testNumberValue(env.get(variableName), expected);
     }
 
     @ParameterizedTest
@@ -126,7 +119,9 @@ class EvaluatorTest {
     void evalFunctionAssignExpression(String input, String functionName, String parameters, String body) {
         Environment env = Environment.create();
         Value value = testEval(input, env);
+
         testFunctionValue(value, parameters, body);
+        testFunctionValue(env.get(functionName), parameters, body);
     }
 
     Value testEval(String input) {

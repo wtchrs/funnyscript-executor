@@ -4,7 +4,7 @@ import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ParsingErrorException;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.NumberLiteral;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class NumberParselet implements PrefixParselet {
 

@@ -7,7 +7,7 @@ import xyz.firstlab.evaluator.object.*;
 import xyz.firstlab.parser.DefaultParser;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ast.Program;
-import xyz.firstlab.token.Lexer;
+import xyz.firstlab.lexer.Lexer;
 
 import java.math.BigDecimal;
 

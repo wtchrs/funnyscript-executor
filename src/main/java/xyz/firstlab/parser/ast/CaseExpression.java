@@ -2,7 +2,7 @@ package xyz.firstlab.parser.ast;
 
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.object.Value;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 import java.util.List;
 import java.util.stream.Collectors;

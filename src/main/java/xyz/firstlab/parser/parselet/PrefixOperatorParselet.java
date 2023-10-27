@@ -4,7 +4,7 @@ import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.PrefixExpression;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class PrefixOperatorParselet implements PrefixParselet {
 

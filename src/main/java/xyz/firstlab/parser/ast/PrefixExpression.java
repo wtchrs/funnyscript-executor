@@ -6,7 +6,7 @@ import xyz.firstlab.evaluator.EvaluatingErrorException;
 import xyz.firstlab.evaluator.object.NumberValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.evaluator.object.ValueType;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class PrefixExpression extends Expression {
 

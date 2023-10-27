@@ -1,6 +1,6 @@
 package xyz.firstlab.parser.ast;
 
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public abstract class Expression implements Node {
 

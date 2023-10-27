@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import xyz.firstlab.parser.ast.*;
-import xyz.firstlab.token.Lexer;
+import xyz.firstlab.lexer.Lexer;
 
 import java.math.BigDecimal;
 import java.util.List;

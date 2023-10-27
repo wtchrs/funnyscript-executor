@@ -1,8 +1,8 @@
 package xyz.firstlab.parser;
 
 import xyz.firstlab.parser.parselet.*;
-import xyz.firstlab.token.Lexer;
-import xyz.firstlab.token.TokenType;
+import xyz.firstlab.lexer.Lexer;
+import xyz.firstlab.lexer.TokenType;
 
 public class DefaultParser extends Parser {
 

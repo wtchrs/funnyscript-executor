@@ -4,8 +4,8 @@ import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.FunctionExpression;
-import xyz.firstlab.token.Token;
-import xyz.firstlab.token.TokenType;
+import xyz.firstlab.lexer.Token;
+import xyz.firstlab.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;

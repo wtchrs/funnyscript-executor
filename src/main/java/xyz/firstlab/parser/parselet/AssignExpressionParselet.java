@@ -4,7 +4,7 @@ import xyz.firstlab.parser.AssignExpressionUtils;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
 import xyz.firstlab.parser.ast.*;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class AssignExpressionParselet implements InfixParselet {
 

@@ -4,7 +4,7 @@ import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
 import xyz.firstlab.evaluator.object.FunctionValue;
 import xyz.firstlab.evaluator.object.Value;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 import java.util.ArrayList;
 import java.util.List;

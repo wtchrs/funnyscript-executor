@@ -3,7 +3,7 @@ package xyz.firstlab.parser.parselet;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ast.Expression;
 import xyz.firstlab.parser.ast.StringLiteral;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class StringParselet implements PrefixParselet {
     @Override

@@ -3,9 +3,9 @@ package xyz.firstlab.parser;
 import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.parser.parselet.InfixParselet;
 import xyz.firstlab.parser.parselet.PrefixParselet;
-import xyz.firstlab.token.Lexer;
-import xyz.firstlab.token.Token;
-import xyz.firstlab.token.TokenType;
+import xyz.firstlab.lexer.Lexer;
+import xyz.firstlab.lexer.Token;
+import xyz.firstlab.lexer.TokenType;
 
 import java.util.*;
 

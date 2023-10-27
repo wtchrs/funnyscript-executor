@@ -2,7 +2,7 @@ package xyz.firstlab.evaluator;
 
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.evaluator.object.ValueType;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public abstract class EvaluatorUtils {
 

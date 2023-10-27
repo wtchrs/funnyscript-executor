@@ -3,8 +3,8 @@ package xyz.firstlab.parser.parselet;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ast.BooleanLiteral;
 import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.token.Token;
-import xyz.firstlab.token.TokenType;
+import xyz.firstlab.lexer.Token;
+import xyz.firstlab.lexer.TokenType;
 
 public class BooleanParselet implements PrefixParselet {
 

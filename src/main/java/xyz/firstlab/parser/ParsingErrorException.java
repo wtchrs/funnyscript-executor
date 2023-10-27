@@ -1,6 +1,6 @@
 package xyz.firstlab.parser;
 
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class ParsingErrorException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package xyz.firstlab.token;
+package xyz.firstlab.lexer;
 
 public class Lexer {
 

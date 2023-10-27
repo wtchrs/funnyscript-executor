@@ -5,8 +5,8 @@ import xyz.firstlab.parser.Precedence;
 import xyz.firstlab.parser.ast.BooleanLiteral;
 import xyz.firstlab.parser.ast.CaseExpression;
 import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.token.Token;
-import xyz.firstlab.token.TokenType;
+import xyz.firstlab.lexer.Token;
+import xyz.firstlab.lexer.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;

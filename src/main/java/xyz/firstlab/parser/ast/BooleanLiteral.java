@@ -3,7 +3,7 @@ package xyz.firstlab.parser.ast;
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.Value;
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class BooleanLiteral extends Expression {
 

@@ -1,6 +1,6 @@
 package xyz.firstlab.evaluator;
 
-import xyz.firstlab.token.Token;
+import xyz.firstlab.lexer.Token;
 
 public class EvaluatingErrorException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package xyz.firstlab.token;
+package xyz.firstlab.lexer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

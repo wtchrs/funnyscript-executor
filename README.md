@@ -1,3 +1,4 @@
-# MathExecutor
+# funnyscript-executor
 
-MathExecutor is the executor that execute some simple scripts that can perform simple mathematical calculation.
+funnyscript-executor is the executor that execute the simple funnyscript that can perform simple mathematical
+calculation.

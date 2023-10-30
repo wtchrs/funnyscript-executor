@@ -69,8 +69,8 @@ public class InfixExpression extends Expression {
             case "+" -> new NumberValue(leftValue.add(rightValue));
             case "-" -> new NumberValue(leftValue.subtract(rightValue));
             case "*" -> new NumberValue(leftValue.multiply(rightValue));
-            case "/" -> new NumberValue(leftValue.divide(rightValue, NumberValue.getContext()));
-            case "^" -> new NumberValue(BigDecimalMath.pow(leftValue, rightValue, NumberValue.getContext()));
+            case "/" -> new NumberValue(leftValue.divide(rightValue, NumberValue.getMathContext()));
+            case "^" -> new NumberValue(BigDecimalMath.pow(leftValue, rightValue, NumberValue.getMathContext()));
             case "==" -> new BooleanValue(leftValue.compareTo(rightValue) == 0);
             case "/=" -> new BooleanValue(leftValue.compareTo(rightValue) != 0);
             case "<" -> new BooleanValue(leftValue.compareTo(rightValue) < 0);

@@ -1,5 +1,6 @@
 package xyz.firstlab.evaluator;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,6 +11,8 @@ import xyz.firstlab.ast.Program;
 import xyz.firstlab.lexer.Lexer;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -189,11 +192,32 @@ class EvaluatorTest {
                     sqrt(4) | 2
                     min(5, 3, 4, 2) | 2
                     max(5, 3, 4, 2) | 5
+                    log(100) | 2
+                    log(2, 8) | 3
+                    sin(PI / 2) | 1
+                    cos(PI / 2) | 0
+                    tan(PI) | 0
+                    asin(sin(1)) | 1
+                    acos(cos(1)) | 1
+                    atan(tan(1)) | 1
+                    toDegrees(PI / 2) | 90
+                    toDegrees(toRadians(90)) | 90
                     """
     )
     void evalBuiltinFunction(String input, String expected) {
         Value value = testEval(input);
         testNumberValue(value, expected);
+    }
+
+    @Test
+    void evalBuiltinAtan2() {
+        String input = "atan2(1, 1)";
+        Value value = testEval(input);
+        MathContext context = new MathContext(100, RoundingMode.HALF_UP);
+        BigDecimal expected = BigDecimalMath.pi(context)
+                .divide(BigDecimal.valueOf(4), context)
+                .setScale(50, RoundingMode.HALF_UP);
+        testNumberValue(value, expected.toString());
     }
 
     Value testEval(String input) {
@@ -212,18 +236,20 @@ class EvaluatorTest {
 
     private static void testNumberValue(Value value, String expected) {
         assertThat(value)
-                .withFailMessage("value type is wrong. expected: NumberValue, got: %s", value.getClass())
+                .withFailMessage("value type is wrong. expected: NUMBER, got: %s[%s]", value.type(), value.inspect())
                 .isInstanceOf(NumberValue.class);
 
         NumberValue numberValue = (NumberValue) value;
-        assertThat(numberValue.getValue().compareTo(new BigDecimal(expected)))
+        BigDecimal approximate = numberValue.getValue().setScale(50, RoundingMode.HALF_UP);
+        assertThat(approximate.compareTo(new BigDecimal(expected)))
                 .withFailMessage("numberValue.value is wrong. expected: %s, got: %s", expected, numberValue.getValue())
                 .isEqualTo(0);
     }
 
     private static void testBooleanValue(Value value, boolean expected) {
         assertThat(value)
-                .withFailMessage("value type is wrong. expected: BooleanValue, got: %s", value.getClass())
+                .withFailMessage(
+                        "value type is wrong. expected: BOOLEAN, got: %s[%s]", value.type(), value.inspect())
                 .isInstanceOf(BooleanValue.class);
 
         BooleanValue booleanValue = (BooleanValue) value;
@@ -235,7 +261,8 @@ class EvaluatorTest {
 
     private static void testStringValue(Value value, String expected) {
         assertThat(value)
-                .withFailMessage("value type is wrong. expected: StringValue, got: %s", value.getClass())
+                .withFailMessage(
+                        "value type is wrong. expected: STRING, got: %s[%s]", value.type(), value.inspect())
                 .isInstanceOf(StringValue.class);
 
         StringValue stringValue = (StringValue) value;
@@ -246,7 +273,7 @@ class EvaluatorTest {
 
     private void testFunctionValue(Value value, String parameters, String body) {
         assertThat(value)
-                .withFailMessage("value type is wrong. expected: FunctionValue, got: %s", value.getClass())
+                .withFailMessage("value type is wrong. expected: FUNCTION, got: %s[%s]", value.type(), value.inspect())
                 .isInstanceOf(FunctionValue.class);
 
         FunctionValue functionValue = (FunctionValue) value;

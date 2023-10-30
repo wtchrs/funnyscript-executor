@@ -10,7 +10,7 @@ public class NumberValue implements Value {
 
     private final BigDecimal value;
 
-    public static MathContext getContext() {
+    public static MathContext getMathContext() {
         return CONTEXT;
     }
 

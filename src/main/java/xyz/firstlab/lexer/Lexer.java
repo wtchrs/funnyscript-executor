@@ -102,7 +102,7 @@ public class Lexer {
 
     private String readIdentifier() {
         int curPos = position;
-        while (isLetter()) {
+        while (isLetterOrDigit()) {
             readChar();
         }
         return input.subSequence(curPos, position).toString();
@@ -146,6 +146,10 @@ public class Lexer {
 
     private boolean isLetter() {
         return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
+    }
+
+    private boolean isLetterOrDigit() {
+        return isLetter() || '0' <= ch && ch <= '9';
     }
 
     private boolean isDigit() {

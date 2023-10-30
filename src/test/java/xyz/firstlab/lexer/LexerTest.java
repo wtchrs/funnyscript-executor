@@ -41,6 +41,21 @@ class LexerTest {
     }
 
     @Test
+    void testIdentWithDigits() {
+        String input = "var10";
+        Lexer lexer = new Lexer(input);
+        Token token = lexer.nextToken();
+
+        assertThat(token.getType())
+                .withFailMessage("token type is wrong. expected: %s, got: %s", TokenType.IDENT, token.getType())
+                .isEqualTo(TokenType.IDENT);
+
+        assertThat(token.getLiteral())
+                .withFailMessage("token literal is wrong. expected: %s, got:%s", "var10", token.getLiteral())
+                .isEqualTo("var10");
+    }
+
+    @Test
     void testNextToken() {
         String input = """
                 10 + 5

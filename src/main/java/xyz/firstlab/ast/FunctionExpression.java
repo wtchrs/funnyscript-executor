@@ -2,6 +2,7 @@ package xyz.firstlab.ast;
 
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
+import xyz.firstlab.evaluator.object.BuiltinFunctionValue;
 import xyz.firstlab.evaluator.object.FunctionValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.evaluator.object.ValueType;
@@ -41,26 +42,32 @@ public class FunctionExpression extends Expression {
     public Value evaluate(Environment env) {
         Value value = function.evaluate(env);
 
-        if (value.type() != ValueType.FUNCTION) {
-            String message = String.format("Not a function: %s", function.string());
-            throw new EvaluatingErrorException(token(), message);
+        if (value.type() == ValueType.FUNCTION) {
+            FunctionValue func = (FunctionValue) value;
+            List<Identifier> parameters = func.getParameters();
+            Environment enclosedEnv = func.getEnclosedEnv();
+
+            for (int i = 0; i < parameters.size() && i < arguments.size(); i++) {
+                enclosedEnv.set(parameters.get(i).getValue(), arguments.get(i).evaluate(env));
+            }
+
+            if (parameters.size() <= arguments.size()) {
+                return func.getBody().evaluate(enclosedEnv);
+            }
+
+            // If passed arguments is less than function parameters, curried function returned.
+            List<Identifier> newParams = parameters.subList(arguments.size(), parameters.size());
+            return new FunctionValue(newParams, func.getBody(), enclosedEnv);
         }
 
-        FunctionValue func = (FunctionValue) value;
-        List<Identifier> parameters = func.getParameters();
-        Environment enclosedEnv = func.getEnclosedEnv();
-
-        for (int i = 0; i < parameters.size() && i < arguments.size(); i++) {
-            enclosedEnv.set(parameters.get(i).getValue(), arguments.get(i).evaluate(env));
+        if (value.type() == ValueType.BUILTIN_FUNCTION) {
+            var builtinFunction = (BuiltinFunctionValue) value;
+            Value[] evaluatedArgs = arguments.stream().map(arg -> arg.evaluate(env)).toArray(Value[]::new);
+            return builtinFunction.apply(this, evaluatedArgs);
         }
 
-        if (parameters.size() <= arguments.size()) {
-            return func.getBody().evaluate(enclosedEnv);
-        }
-
-        // If passed arguments is less than function parameters, curried function returned.
-        List<Identifier> newParams = parameters.subList(arguments.size(), parameters.size());
-        return new FunctionValue(newParams, func.getBody(), enclosedEnv);
+        String message = String.format("Not a function: %s", function.string());
+        throw new EvaluatingErrorException(token(), message);
     }
 
 }

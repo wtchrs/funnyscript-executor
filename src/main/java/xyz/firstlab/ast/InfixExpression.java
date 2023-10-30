@@ -6,7 +6,6 @@ import xyz.firstlab.evaluator.object.*;
 import xyz.firstlab.lexer.Token;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class InfixExpression extends Expression {
 
@@ -69,7 +68,7 @@ public class InfixExpression extends Expression {
             case "+" -> new NumberValue(leftValue.add(rightValue));
             case "-" -> new NumberValue(leftValue.subtract(rightValue));
             case "*" -> new NumberValue(leftValue.multiply(rightValue));
-            case "/" -> new NumberValue(leftValue.divide(rightValue, 50, RoundingMode.HALF_UP));
+            case "/" -> new NumberValue(leftValue.divide(rightValue, NumberValue.getContext()));
             case "^" -> {
                 double leftDouble = leftValue.doubleValue();
                 double rightDouble = rightValue.doubleValue();

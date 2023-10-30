@@ -1,10 +1,18 @@
 package xyz.firstlab.evaluator.object;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 public class NumberValue implements Value {
 
+    private static final MathContext CONTEXT = new MathContext(12, RoundingMode.HALF_UP);
+
     private final BigDecimal value;
+
+    public static MathContext getContext() {
+        return CONTEXT;
+    }
 
     public NumberValue(BigDecimal value) {
         this.value = value;

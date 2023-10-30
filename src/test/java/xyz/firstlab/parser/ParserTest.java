@@ -5,8 +5,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import xyz.firstlab.ast.*;
-import xyz.firstlab.ast.ast.*;
-import xyz.firstlab.parser.ast.*;
 import xyz.firstlab.lexer.Lexer;
 
 import java.math.BigDecimal;

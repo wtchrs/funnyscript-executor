@@ -1,5 +1,6 @@
 package xyz.firstlab.evaluator;
 
+import xyz.firstlab.evaluator.object.BuiltinValues;
 import xyz.firstlab.evaluator.object.Value;
 
 import java.util.HashMap;
@@ -7,16 +8,22 @@ import java.util.Map;
 
 public class Environment {
 
+    private final static Environment GLOBAL = new Environment(null);
+
     private final Environment outer;
 
     private final Map<String, Value> variables = new HashMap<>();
+
+    static {
+        BuiltinValues.initGlobalEnv(GLOBAL);
+    }
 
     private Environment(Environment outer) {
         this.outer = outer;
     }
 
     public static Environment create() {
-        return new Environment(null);
+        return new Environment(GLOBAL);
     }
 
     public Environment enclosed() {

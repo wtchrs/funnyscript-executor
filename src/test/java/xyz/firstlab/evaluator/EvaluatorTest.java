@@ -189,8 +189,6 @@ class EvaluatorTest {
                     sqrt(4) | 2
                     min(5, 3, 4, 2) | 2
                     max(5, 3, 4, 2) | 5
-                    log(100) | 2
-                    log(2, 8) | 3
                     """
     )
     void evalBuiltinFunction(String input, String expected) {

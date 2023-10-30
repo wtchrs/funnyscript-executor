@@ -2,8 +2,8 @@ package xyz.firstlab.parser.parselet;
 
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.ParsingErrorException;
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.NumberLiteral;
+import xyz.firstlab.ast.Expression;
+import xyz.firstlab.ast.NumberLiteral;
 import xyz.firstlab.lexer.Token;
 
 public class NumberParselet implements PrefixParselet {

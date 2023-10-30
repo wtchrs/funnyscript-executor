@@ -1,4 +1,4 @@
-package xyz.firstlab.parser.ast;
+package xyz.firstlab.ast;
 
 import xyz.firstlab.lexer.Token;
 

@@ -1,5 +1,9 @@
 package xyz.firstlab.parser.parselet;
 
+import xyz.firstlab.ast.AssignExpression;
+import xyz.firstlab.ast.Expression;
+import xyz.firstlab.ast.FunctionAssignExpression;
+import xyz.firstlab.ast.FunctionExpression;
 import xyz.firstlab.parser.AssignExpressionUtils;
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;

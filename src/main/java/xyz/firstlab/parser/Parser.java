@@ -1,6 +1,6 @@
 package xyz.firstlab.parser;
 
-import xyz.firstlab.parser.ast.*;
+import xyz.firstlab.ast.*;
 import xyz.firstlab.parser.parselet.InfixParselet;
 import xyz.firstlab.parser.parselet.PrefixParselet;
 import xyz.firstlab.lexer.Lexer;

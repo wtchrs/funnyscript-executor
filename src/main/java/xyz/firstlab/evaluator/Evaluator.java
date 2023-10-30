@@ -2,7 +2,7 @@ package xyz.firstlab.evaluator;
 
 import xyz.firstlab.evaluator.object.ErrorValue;
 import xyz.firstlab.evaluator.object.Value;
-import xyz.firstlab.parser.ast.Node;
+import xyz.firstlab.ast.Node;
 
 public abstract class Evaluator {
 

@@ -1,4 +1,4 @@
-package xyz.firstlab.parser.ast;
+package xyz.firstlab.ast;
 
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.object.Value;

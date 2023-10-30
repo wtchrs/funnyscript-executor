@@ -2,7 +2,7 @@ package xyz.firstlab.parser.parselet;
 
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
-import xyz.firstlab.parser.ast.Expression;
+import xyz.firstlab.ast.Expression;
 import xyz.firstlab.lexer.TokenType;
 
 public class GroupParselet implements PrefixParselet {

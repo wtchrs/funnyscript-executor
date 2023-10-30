@@ -1,31 +1,31 @@
-package xyz.firstlab.parser.ast;
+package xyz.firstlab.ast;
 
 import xyz.firstlab.evaluator.Environment;
-import xyz.firstlab.evaluator.object.StringValue;
+import xyz.firstlab.evaluator.object.BooleanValue;
 import xyz.firstlab.evaluator.object.Value;
 import xyz.firstlab.lexer.Token;
 
-public class StringLiteral extends Expression {
+public class BooleanLiteral extends Expression {
 
-    private final String value;
+    private final boolean value;
 
-    public StringLiteral(Token token, String value) {
+    public BooleanLiteral(Token token, boolean value) {
         super(token);
         this.value = value;
     }
 
-    public String getValue() {
+    public boolean getValue() {
         return value;
     }
 
     @Override
     public String string() {
-        return value;
+        return Boolean.toString(value);
     }
 
     @Override
     public Value evaluate(Environment env) {
-        return new StringValue(value);
+        return new BooleanValue(value);
     }
 
 }

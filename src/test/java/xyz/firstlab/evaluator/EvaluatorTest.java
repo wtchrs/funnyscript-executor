@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import xyz.firstlab.evaluator.object.*;
 import xyz.firstlab.parser.DefaultParser;
 import xyz.firstlab.parser.Parser;
-import xyz.firstlab.parser.ast.Program;
+import xyz.firstlab.ast.Program;
 import xyz.firstlab.lexer.Lexer;
 
 import java.math.BigDecimal;
@@ -180,15 +180,22 @@ class EvaluatorTest {
         testEnvVariables(varNames, funcEnv, values);
     }
 
-    private static void testEnvVariables(String[] varNames, Environment funcEnv, String[] values) {
-        for (int i = 0; i < varNames.length; i++) {
-            Value val = funcEnv.get(varNames[i]);
-            assertThat(val.inspect())
-                    .withFailMessage(
-                            "[%d] Captured variable '%s' is wrong. expected: %s, got: %s",
-                            i, varNames[i], values[i], val)
-                    .isEqualTo(values[i]);
-        }
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            textBlock = """
+                    abs(5) | 5
+                    abs(-5) | 5
+                    sqrt(4) | 2
+                    min(5, 3, 4, 2) | 2
+                    max(5, 3, 4, 2) | 5
+                    log(100) | 2
+                    log(2, 8) | 3
+                    """
+    )
+    void evalBuiltinFunction(String input, String expected) {
+        Value value = testEval(input);
+        testNumberValue(value, expected);
     }
 
     Value testEval(String input) {
@@ -251,6 +258,17 @@ class EvaluatorTest {
                         "functionValue.value is wrong. expected: %s, got: %s",
                         expectedInspection, functionValue.inspect())
                 .isEqualTo(expectedInspection);
+    }
+
+    private static void testEnvVariables(String[] varNames, Environment funcEnv, String[] values) {
+        for (int i = 0; i < varNames.length; i++) {
+            Value val = funcEnv.get(varNames[i]);
+            assertThat(val.inspect())
+                    .withFailMessage(
+                            "[%d] Captured variable '%s' is wrong. expected: %s, got: %s",
+                            i, varNames[i], values[i], val)
+                    .isEqualTo(values[i]);
+        }
     }
 
 }

@@ -1,8 +1,8 @@
 package xyz.firstlab.evaluator.object;
 
 import xyz.firstlab.evaluator.Environment;
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.Identifier;
+import xyz.firstlab.ast.Expression;
+import xyz.firstlab.ast.Identifier;
 
 import java.util.List;
 import java.util.stream.Collectors;

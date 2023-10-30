@@ -1,8 +1,8 @@
 package xyz.firstlab.parser;
 
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.FunctionExpression;
-import xyz.firstlab.parser.ast.Identifier;
+import xyz.firstlab.ast.Expression;
+import xyz.firstlab.ast.FunctionExpression;
+import xyz.firstlab.ast.Identifier;
 
 public abstract class AssignExpressionUtils {
 

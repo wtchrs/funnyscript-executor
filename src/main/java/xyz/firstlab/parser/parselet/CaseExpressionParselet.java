@@ -2,9 +2,9 @@ package xyz.firstlab.parser.parselet;
 
 import xyz.firstlab.parser.Parser;
 import xyz.firstlab.parser.Precedence;
-import xyz.firstlab.parser.ast.BooleanLiteral;
-import xyz.firstlab.parser.ast.CaseExpression;
-import xyz.firstlab.parser.ast.Expression;
+import xyz.firstlab.ast.BooleanLiteral;
+import xyz.firstlab.ast.CaseExpression;
+import xyz.firstlab.ast.Expression;
 import xyz.firstlab.lexer.Token;
 import xyz.firstlab.lexer.TokenType;
 

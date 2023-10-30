@@ -1,8 +1,8 @@
 package xyz.firstlab.parser.parselet;
 
 import xyz.firstlab.parser.Parser;
-import xyz.firstlab.parser.ast.Expression;
-import xyz.firstlab.parser.ast.Identifier;
+import xyz.firstlab.ast.Expression;
+import xyz.firstlab.ast.Identifier;
 import xyz.firstlab.lexer.Token;
 
 public class IdentifierParselet implements PrefixParselet {

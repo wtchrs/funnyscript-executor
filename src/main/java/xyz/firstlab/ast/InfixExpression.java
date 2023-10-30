@@ -1,5 +1,6 @@
 package xyz.firstlab.ast;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
 import xyz.firstlab.evaluator.object.*;
@@ -69,11 +70,7 @@ public class InfixExpression extends Expression {
             case "-" -> new NumberValue(leftValue.subtract(rightValue));
             case "*" -> new NumberValue(leftValue.multiply(rightValue));
             case "/" -> new NumberValue(leftValue.divide(rightValue, NumberValue.getContext()));
-            case "^" -> {
-                double leftDouble = leftValue.doubleValue();
-                double rightDouble = rightValue.doubleValue();
-                yield new NumberValue(BigDecimal.valueOf(Math.pow(leftDouble, rightDouble)));
-            }
+            case "^" -> new NumberValue(BigDecimalMath.pow(leftValue, rightValue, NumberValue.getContext()));
             case "==" -> new BooleanValue(leftValue.compareTo(rightValue) == 0);
             case "/=" -> new BooleanValue(leftValue.compareTo(rightValue) != 0);
             case "<" -> new BooleanValue(leftValue.compareTo(rightValue) < 0);

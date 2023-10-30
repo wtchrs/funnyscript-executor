@@ -1,18 +1,18 @@
 package xyz.firstlab.evaluator.object;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import xyz.firstlab.ast.Expression;
 import xyz.firstlab.evaluator.Environment;
 import xyz.firstlab.evaluator.EvaluatingErrorException;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 
 public abstract class BuiltinValues {
 
-    public static final NumberValue PI = new NumberValue(BigDecimal.valueOf(Math.PI));
+    public static final NumberValue PI = new NumberValue(BigDecimalMath.pi(NumberValue.getContext()));
 
-    public static final NumberValue E = new NumberValue(BigDecimal.valueOf(Math.E));
+    public static final NumberValue E = new NumberValue(BigDecimalMath.e(NumberValue.getContext()));
 
     public static void initGlobalEnv(Environment env) {
         // Built-in variables
@@ -37,7 +37,7 @@ public abstract class BuiltinValues {
         assertLength(exp, args, 1);
         NumberValue number = assertType(exp, args[0], NumberValue.class);
 
-        return new NumberValue(number.getValue().sqrt(NumberValue.getContext()));
+        return new NumberValue(BigDecimalMath.sqrt(number.getValue(), NumberValue.getContext()));
     }
 
     private static Value min(Expression exp, Value... args) {

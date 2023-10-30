@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 public class NumberValue implements Value {
 
-    private static final MathContext CONTEXT = new MathContext(12, RoundingMode.HALF_UP);
+    private static final MathContext CONTEXT = new MathContext(100, RoundingMode.HALF_UP);
 
     private final BigDecimal value;
 

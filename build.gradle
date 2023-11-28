@@ -6,11 +6,21 @@ plugins {
 group = 'xyz.firstlab'
 version = '1.0-SNAPSHOT'
 
+java {
+    withSourcesJar()
+}
+
 repositories {
     mavenCentral()
 }
 
 publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
     repositories {
         maven {
             name = 'GithubPackages'

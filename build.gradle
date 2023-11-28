@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
 group = 'xyz.firstlab'
@@ -7,6 +8,19 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = 'GithubPackages'
+            url = uri('https://maven.pkg.github.com/wtchrs/funnyscript-executor')
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 dependencies {
